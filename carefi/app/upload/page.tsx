@@ -22,7 +22,7 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 py-12">
+    <div className="min-h-screen bg-white py-12">
       <div className="container-narrow">
         {/* Header */}
         <div className="mb-12 text-center">
@@ -39,14 +39,14 @@ export default function UploadPage() {
           <UploadZone maxFiles={3} onFiles={setFiles} />
 
           {/* Tips */}
-          <div className="rounded-lg bg-stone-100 border border-stone-300 p-6">
+          <div className="rounded-lg bg-blue-50 border border-gray-200 p-6">
             <div className="flex items-start gap-3">
-              <Lightbulb className="w-5 h-5 text-stone-700 mt-0.5 flex-shrink-0" />
+              <Lightbulb className="w-5 h-5 text-gray-700 mt-0.5 flex-shrink-0" />
               <div className="space-y-2">
-                <p className="text-sm font-medium text-stone-900">
+                <p className="text-sm font-medium text-gray-900">
                   Tips for best results:
                 </p>
-                <ul className="text-sm text-stone-700 space-y-1 list-disc list-inside">
+                <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
                   <li>Use natural, even lighting (near a window is ideal)</li>
                   <li>Remove heavy makeup or filters</li>
                   <li>
@@ -62,11 +62,11 @@ export default function UploadPage() {
           <PrivacyNote />
 
           {/* Navigation */}
-          <div className="flex items-center justify-between pt-6 border-t border-stone-200">
+          <div className="flex items-center justify-between pt-6 border-t border-gray-200">
             <Button
               variant="ghost"
               onClick={() => router.push("/onboarding")}
-              className="gap-2 hover:bg-stone-100"
+              className="gap-2 hover:bg-blue-50"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -75,14 +75,14 @@ export default function UploadPage() {
               <Button
                 onClick={handleContinue}
                 disabled={files.length !== 3}
-                className="gap-2 bg-stone-900 hover:bg-stone-800 text-white"
+                className="gap-2 bg-[#4d688a] hover:bg-slate-700 text-white"
                 size="lg"
               >
                 Continue to analysis
                 <ArrowRight className="w-4 h-4" />
               </Button>
               {files.length < 3 && (
-                <p className="text-sm text-stone-500 mt-3">
+                <p className="text-sm text-gray-500 mt-3">
                   Upload {3 - files.length} more{" "}
                   {3 - files.length === 1 ? "photo" : "photos"} to continue
                 </p>
@@ -93,7 +93,7 @@ export default function UploadPage() {
 
         {/* Example angles */}
         <div className="mt-8">
-          <p className="text-sm font-medium text-stone-700 mb-4 text-center">
+          <p className="text-sm font-medium text-gray-700 mb-4 text-center">
             Example angles:
           </p>
           <div className="grid grid-cols-3 gap-4">
@@ -104,7 +104,7 @@ export default function UploadPage() {
             ].map(({ label, image }) => (
               <div
                 key={label}
-                className="aspect-square rounded-xl bg-stone-200 border border-stone-300 flex items-center justify-center relative overflow-hidden"
+                className="aspect-square rounded-xl bg-gray-200 border border-gray-300 flex items-center justify-center relative overflow-hidden"
               >
                 <Image
                   src={image}

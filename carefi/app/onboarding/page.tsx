@@ -118,7 +118,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 py-12">
+    <div className="min-h-screen bg-white py-12">
       <div className="container-narrow">
         {/* Exit button */}
         <div className="flex justify-end mb-8">
@@ -126,7 +126,7 @@ export default function OnboardingPage() {
             variant="ghost"
             size="icon"
             onClick={() => router.push("/")}
-            className="text-stone-600 hover:text-stone-900"
+            className="text-gray-600 hover:text-gray-900"
           >
             <X className="w-5 h-5" />
             <span className="sr-only">Exit</span>
@@ -149,7 +149,7 @@ export default function OnboardingPage() {
               <div
                 key={index}
                 className={`flex-1 h-2.5 rounded-full ${
-                  index <= currentStep ? "bg-stone-900" : "bg-stone-200"
+                  index <= currentStep ? "bg-[#4d688a]" : "bg-gray-200"
                 } ${index < 4 ? "mr-2" : ""}`}
               />
             ))}
@@ -162,10 +162,10 @@ export default function OnboardingPage() {
           {currentStep === 0 && (
             <div className="space-y-5">
               <div className="space-y-2.5 min-h-[80px]">
-                <h3 className="text-3xl font-display font-medium text-stone-900">
+                <h3 className="text-3xl font-display font-medium text-gray-900">
                   What are your main skin concerns?
                 </h3>
-                <p className="text-stone-600">Select all that apply</p>
+                <p className="text-gray-600">Select all that apply</p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {CONCERNS.map((concern) => (
@@ -174,8 +174,8 @@ export default function OnboardingPage() {
                     onClick={() => toggleSelection("concerns", concern)}
                     className={`p-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium ${
                       formData.concerns.includes(concern)
-                        ? "border-stone-900 bg-stone-900 text-white"
-                        : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                        ? "border-[#4d688a] bg-[#4d688a] text-white"
+                        : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                     }`}
                   >
                     {concern}
@@ -189,10 +189,10 @@ export default function OnboardingPage() {
           {currentStep === 1 && (
             <div className="space-y-5">
               <div className="space-y-2.5 min-h-[80px]">
-                <h3 className="text-3xl font-display font-medium text-stone-900">
+                <h3 className="text-3xl font-display font-medium text-gray-900">
                   What do you want to improve?
                 </h3>
-                <p className="text-stone-600">Choose your top priorities</p>
+                <p className="text-gray-600">Choose your top priorities</p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {GOALS.map((goal) => (
@@ -201,8 +201,8 @@ export default function OnboardingPage() {
                     onClick={() => toggleSelection("goals", goal)}
                     className={`p-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium ${
                       formData.goals.includes(goal)
-                        ? "border-stone-900 bg-stone-900 text-white"
-                        : "border-stone-200 bg-white text-stone-700 hover:border-stone-300"
+                        ? "border-[#4d688a] bg-[#4d688a] text-white"
+                        : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                     }`}
                   >
                     {goal}
@@ -216,10 +216,10 @@ export default function OnboardingPage() {
           {currentStep === 2 && (
             <div className="space-y-5">
               <div className="space-y-2.5 min-h-[80px]">
-                <h3 className="text-3xl font-display font-medium text-stone-900">
+                <h3 className="text-3xl font-display font-medium text-gray-900">
                   Tell us about your current routine
                 </h3>
-                <p className="text-stone-600">
+                <p className="text-gray-600">
                   List the products you currently use (AM and PM)
                 </p>
               </div>
@@ -231,7 +231,7 @@ export default function OnboardingPage() {
                 }
                 className="min-h-[160px] resize-none"
               />
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-gray-500">
                 Optional—but helps us understand what's working for you
               </p>
             </div>
@@ -241,10 +241,10 @@ export default function OnboardingPage() {
           {currentStep === 3 && (
             <div className="space-y-5">
               <div className="space-y-2.5 min-h-[80px]">
-                <h3 className="text-3xl font-display font-medium text-stone-900">
+                <h3 className="text-3xl font-display font-medium text-gray-900">
                   Any ingredients to avoid?
                 </h3>
-                <p className="text-stone-600">
+                <p className="text-gray-600">
                   List any known irritants or allergies
                 </p>
               </div>
@@ -256,7 +256,7 @@ export default function OnboardingPage() {
                 }
                 className="min-h-[120px] resize-none"
               />
-              <p className="text-xs text-stone-500">
+              <p className="text-xs text-gray-500">
                 We'll filter these out of your recommendations
               </p>
             </div>
@@ -266,17 +266,17 @@ export default function OnboardingPage() {
           {currentStep === 4 && (
             <div className="space-y-5">
               <div className="space-y-2.5 min-h-[80px]">
-                <h3 className="text-3xl font-display font-medium text-stone-900">
+                <h3 className="text-3xl font-display font-medium text-gray-900">
                   What's your monthly budget?
                 </h3>
-                <p className="text-stone-600">
+                <p className="text-gray-600">
                   We'll optimize your routine to stay within range
                 </p>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Minimum
                     </label>
                     <Input
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Maximum
                     </label>
                     <Input
@@ -325,7 +325,7 @@ export default function OnboardingPage() {
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-stone-600">
+                <p className="text-sm text-gray-600">
                   Current range: ${formData.budgetMin} - ${formData.budgetMax}{" "}
                   per month
                 </p>
@@ -334,12 +334,12 @@ export default function OnboardingPage() {
           )}
 
           {/* Navigation */}
-          <div className={`flex items-center mt-6 pt-6 border-t border-stone-200 ${currentStep === 0 ? 'justify-end' : 'justify-between'}`}>
+          <div className={`flex items-center mt-6 pt-6 border-t border-gray-200 ${currentStep === 0 ? 'justify-end' : 'justify-between'}`}>
             {currentStep > 0 && (
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="gap-2 hover:bg-stone-100"
+                className="gap-2 hover:bg-blue-50"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back
@@ -348,7 +348,7 @@ export default function OnboardingPage() {
             <Button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="gap-2 bg-stone-900 hover:bg-stone-800 text-white"
+              className="gap-2 bg-[#4d688a] hover:bg-slate-700 text-white"
             >
               {currentStep === 4 ? "Continue to upload" : "Next"}
               <ArrowRight className="w-4 h-4" />
@@ -358,8 +358,8 @@ export default function OnboardingPage() {
 
         {/* Summary chips */}
         {(formData.concerns.length > 0 || formData.goals.length > 0) && (
-          <div className="mt-6 p-6 rounded-xl bg-white border border-stone-200">
-            <p className="text-sm font-medium text-stone-700 mb-3">
+          <div className="mt-6 p-6 rounded-xl bg-white border border-gray-200">
+            <p className="text-sm font-medium text-gray-700 mb-3">
               Your selections:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -369,7 +369,7 @@ export default function OnboardingPage() {
                 </Badge>
               ))}
               {formData.goals.map((goal) => (
-                <Badge key={goal} variant="outline" className="bg-stone-100">
+                <Badge key={goal} variant="outline" className="bg-blue-50">
                   {goal}
                 </Badge>
               ))}

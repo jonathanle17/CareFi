@@ -133,8 +133,8 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "relative rounded-2xl border-2 border-dashed border-stone-300 bg-stone-50 p-12 text-center transition-all duration-200",
-          isDragging && "border-stone-400 bg-stone-100",
+          "relative rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center transition-all duration-200",
+          isDragging && "border-gray-400 bg-blue-50",
           files.length >= maxFiles && "opacity-50 pointer-events-none"
         )}
       >
@@ -149,14 +149,14 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
           aria-label="Upload images"
         />
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-stone-200 flex items-center justify-center">
-            <Upload className="w-6 h-6 text-stone-600" />
+          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+            <Upload className="w-6 h-6 text-gray-600" />
           </div>
           <div>
-            <p className="text-base font-medium text-stone-900 mb-1">
+            <p className="text-base font-medium text-gray-900 mb-1">
               Drop your photos here, or click to browse
             </p>
-            <p className="text-sm text-stone-500">
+            <p className="text-sm text-gray-500">
               Upload up to {maxFiles} images ({files.length}/{maxFiles})
             </p>
           </div>
@@ -169,7 +169,7 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
           {previews.map((preview, index) => (
             <div
               key={index}
-              className="relative aspect-square rounded-xl overflow-hidden border border-stone-200 group"
+              className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 group"
             >
               <Image
                 src={preview}
@@ -180,15 +180,15 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                 <button
                   onClick={() => removeFile(index)}
-                  className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-stone-100 transition-colors"
+                  className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-blue-50 transition-colors"
                   aria-label={`Remove image ${index + 1}`}
                 >
-                  <X className="w-4 h-4 text-stone-900" />
+                  <X className="w-4 h-4 text-gray-900" />
                 </button>
               </div>
               {/* Face box overlay */}
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-dashed border-stone-400/50 rounded-lg" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-dashed border-gray-400/50 rounded-lg" />
               </div>
             </div>
           ))}
@@ -196,9 +196,9 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
           {Array.from({ length: maxFiles - previews.length }).map((_, index) => (
             <div
               key={`empty-${index}`}
-              className="aspect-square rounded-xl border-2 border-dashed border-stone-200 bg-stone-50 flex items-center justify-center"
+              className="aspect-square rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center"
             >
-              <ImageIcon className="w-8 h-8 text-stone-300" />
+              <ImageIcon className="w-8 h-8 text-gray-300" />
             </div>
           ))}
         </div>

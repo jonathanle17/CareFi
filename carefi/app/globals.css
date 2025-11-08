@@ -3,7 +3,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #A89175;
+  --color-brand: #4d688a;
   --color-brand-success: #D4C5B0;
   --color-brand-warning: #C9A88A;
   
@@ -42,7 +42,7 @@
     background-color: white;
     border-width: 1px;
     border-color: #e7e5e4;
-    box-shadow: 0 2px 20px rgba(168, 145, 117, 0.08);
+    box-shadow: 0 2px 20px rgba(77, 104, 138, 0.08);
   }
 
   .section-spacing {
