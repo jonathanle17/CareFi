@@ -51,13 +51,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <PrimaryCTA label="Get my skin report" href="/signup" />
-                <PrimaryCTA
-                  label="Start with 3 photos"
-                  href="/upload"
-                  variant="secondary"
-                  showArrow={false}
-                />
+                <PrimaryCTA label="Get started" href="/signup" />
               </div>
             </div>
 
@@ -255,7 +249,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <h4 className="font-display text-xl font-semibold bg-gradient-to-r from-[#36485e] to-[#1e293b] bg-clip-text text-transparent mb-4">
-                DermaFi
+                CareFi
               </h4>
               <p className="text-base text-gray-600 leading-relaxed">
                 Clinical-grade skin analysis, tailored routines, and
@@ -316,7 +310,7 @@ export default function Home() {
           </div>
           <div className="pt-8 border-t border-slate-700/20">
             <p className="text-sm text-gray-600 text-center">
-              © 2025 DermaFi. Your photos are private and never shared.
+              © 2025 CareFi. Your photos are private and never shared.
             </p>
           </div>
         </div>
