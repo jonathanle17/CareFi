@@ -16,7 +16,7 @@ export default function UploadPage() {
   const handleContinue = () => {
     if (files.length === 3) {
       // TODO: Upload files to backend
-      router.push("/analyze");
+      router.push("/signup");
     }
   };
 
