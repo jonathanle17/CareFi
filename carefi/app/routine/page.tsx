@@ -113,12 +113,18 @@ export default function RoutinePage() {
           {/* Main content */}
           <div className="lg:col-span-3 space-y-8">
             <Tabs defaultValue="am" className="w-full">
-              <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-                <TabsTrigger value="am" className="gap-2">
+              <TabsList className="grid w-full max-w-md grid-cols-2 gap-2 mb-0.5 bg-stone-100">
+                <TabsTrigger 
+                  value="am" 
+                  className="gap-2 border border-black data-[state=active]:bg-stone-900 data-[state=active]:text-white"
+                >
                   <Sun className="w-4 h-4" />
                   Morning
                 </TabsTrigger>
-                <TabsTrigger value="pm" className="gap-2">
+                <TabsTrigger 
+                  value="pm" 
+                  className="gap-2 border border-black data-[state=active]:bg-stone-700 data-[state=active]:text-white"
+                >
                   <Moon className="w-4 h-4" />
                   Evening
                 </TabsTrigger>
@@ -178,7 +184,7 @@ export default function RoutinePage() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            <div className="sticky top-6 space-y-6">
+            <div className="sticky top-6 space-y-6 lg:pt-11">
               {/* Profile summary */}
               <Card className="p-6 space-y-4">
                 <h3 className="font-medium text-stone-900">Your profile</h3>

@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, X } from "lucide-react";
 
 const CONCERNS = [
   "Acne",
@@ -42,6 +42,8 @@ export default function OnboardingPage() {
     budgetMin: "20",
     budgetMax: "100",
   });
+  const [budgetMinError, setBudgetMinError] = useState<string>("");
+  const [budgetMaxError, setBudgetMaxError] = useState<string>("");
 
   const steps = [
     { id: "concerns", title: "Skin concerns" },
@@ -74,15 +76,70 @@ export default function OnboardingPage() {
     }
   };
 
+  const validateBudgetMin = (min: string, max: string) => {
+    const minNum = parseFloat(min);
+    const maxNum = parseFloat(max);
+    
+    if (isNaN(minNum) || minNum < 1) {
+      setBudgetMinError("Minimum must be at least $1");
+      return false;
+    }
+    
+    if (!isNaN(maxNum) && minNum > maxNum) {
+      setBudgetMinError("Minimum cannot exceed maximum");
+      return false;
+    }
+    
+    setBudgetMinError("");
+    return true;
+  };
+
+  const validateBudgetMax = (min: string, max: string) => {
+    const minNum = parseFloat(min);
+    const maxNum = parseFloat(max);
+    
+    if (max && (!isNaN(maxNum) && maxNum < minNum)) {
+      setBudgetMaxError("Maximum cannot be less than minimum");
+      return false;
+    }
+    
+    setBudgetMaxError("");
+    return true;
+  };
+
   const canProceed = () => {
     if (currentStep === 0) return formData.concerns.length > 0;
     if (currentStep === 1) return formData.goals.length > 0;
+    if (currentStep === 4) {
+      const minNum = parseFloat(formData.budgetMin);
+      const maxNum = parseFloat(formData.budgetMax);
+      return (
+        !isNaN(minNum) &&
+        minNum >= 1 &&
+        !isNaN(maxNum) &&
+        minNum <= maxNum &&
+        budgetMinError === "" &&
+        budgetMaxError === ""
+      );
+    }
     return true;
   };
 
   return (
     <div className="min-h-screen bg-stone-50 py-12">
       <div className="container-narrow">
+        {/* Exit button */}
+        <div className="flex justify-end mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/")}
+            className="text-stone-600 hover:text-stone-900"
+          >
+            <X className="w-5 h-5" />
+            <span className="sr-only">Exit</span>
+          </Button>
+        </div>
         {/* Header */}
         <div className="mb-12 text-center">
           <SectionHeading
@@ -225,13 +282,24 @@ export default function OnboardingPage() {
                     </label>
                     <Input
                       type="number"
+                      min="1"
                       value={formData.budgetMin}
-                      onChange={(e) =>
-                        setFormData({ ...formData, budgetMin: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormData({ ...formData, budgetMin: value });
+                        if (value) {
+                          validateBudgetMin(value, formData.budgetMax);
+                          validateBudgetMax(value, formData.budgetMax);
+                        } else {
+                          setBudgetMinError("");
+                        }
+                      }}
                       placeholder="20"
-                      className="w-full"
+                      className={`w-full ${budgetMinError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
                     />
+                    {budgetMinError && (
+                      <p className="text-sm text-red-600 mt-1">{budgetMinError}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-2">
@@ -240,12 +308,22 @@ export default function OnboardingPage() {
                     <Input
                       type="number"
                       value={formData.budgetMax}
-                      onChange={(e) =>
-                        setFormData({ ...formData, budgetMax: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormData({ ...formData, budgetMax: value });
+                        if (value) {
+                          validateBudgetMax(formData.budgetMin, value);
+                          validateBudgetMin(formData.budgetMin, value);
+                        } else {
+                          setBudgetMaxError("");
+                        }
+                      }}
                       placeholder="100"
-                      className="w-full"
+                      className={`w-full ${budgetMaxError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
                     />
+                    {budgetMaxError && (
+                      <p className="text-sm text-red-600 mt-1">{budgetMaxError}</p>
+                    )}
                   </div>
                 </div>
                 <p className="text-sm text-stone-600">
@@ -257,20 +335,21 @@ export default function OnboardingPage() {
           )}
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-12 pt-6 border-t border-stone-200">
-            <Button
-              variant="ghost"
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              className="gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
+          <div className={`flex items-center mt-12 pt-6 border-t border-stone-200 ${currentStep === 0 ? 'justify-end' : 'justify-between'}`}>
+            {currentStep > 0 && (
+              <Button
+                variant="ghost"
+                onClick={handleBack}
+                className="gap-2 hover:bg-stone-100"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+            )}
             <Button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="gap-2 bg-stone-900 hover:bg-stone-800"
+              className="gap-2 bg-stone-900 hover:bg-stone-800 text-white"
             >
               {currentStep === steps.length - 1 ? "Continue to upload" : "Next"}
               <ArrowRight className="w-4 h-4" />

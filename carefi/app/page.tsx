@@ -10,19 +10,45 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Hero Section */}
-      <section className="section-spacing">
-        <div className="container-wide">
+      <section className="section-spacing relative overflow-hidden">
+        {/* Animated background pattern */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgb(120_113_108_/_0.15)_1px,_transparent_0)] [background-size:40px_40px] animate-[drift_20s_ease-in-out_infinite]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgb(120_113_108_/_0.1)_1px,_transparent_0)] [background-size:60px_60px] animate-[drift_25s_ease-in-out_infinite_reverse]" />
+        </div>
+        <div className="container-wide relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left: Text content */}
             <div className="space-y-8">
               <div className="space-y-6">
-                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight text-stone-900 text-balance">
-                  Understand your skin—with clinical clarity.
+                <h1 className="font-display text-5xl md:text-6xl lg:text-7xl tracking-tight text-balance">
+                  <span className="bg-gradient-to-br from-stone-900 via-stone-800 to-stone-600 bg-clip-text text-transparent">
+                    Understand your skin—
+                  </span>
+                  <span className="bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                    with clinical clarity.
+                  </span>
                 </h1>
                 <p className="text-lg md:text-xl text-stone-600 leading-relaxed max-w-xl">
                   AI-assisted analysis, dermatologist-grade insights, and a
                   budget-smart routine tailored to you.
                 </p>
+              </div>
+              
+              {/* Stats badges */}
+              <div className="flex flex-wrap gap-6 pt-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+                  <span className="text-sm font-medium text-stone-900">10K+ analyses</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-sm font-medium text-stone-900">98% satisfaction</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-stone-500 animate-pulse" />
+                  <span className="text-sm font-medium text-stone-900">Avg $420 saved</span>
+                </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <PrimaryCTA label="Get my skin report" href="/onboarding" />
@@ -37,20 +63,32 @@ export default function Home() {
 
             {/* Right: Visual */}
             <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-stone-200 to-stone-300 overflow-hidden relative border border-stone-300">
+              {/* Floating accent elements */}
+              <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-teal-400/20 to-emerald-400/20 rounded-full blur-3xl animate-[float_6s_ease-in-out_infinite]" />
+              <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl animate-[float_8s_ease-in-out_infinite_reverse]" />
+              
+              <div className="aspect-square rounded-2xl bg-gradient-to-br from-teal-50 via-emerald-50 to-stone-100 overflow-hidden relative border border-emerald-200/50 shadow-2xl shadow-teal-500/10">
+                {/* Animated gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-emerald-500/5 animate-[pulse_4s_ease-in-out_infinite]" />
+                
                 {/* Placeholder for hero visual */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-3/4 h-3/4 rounded-lg border-2 border-dashed border-stone-400/50 flex items-center justify-center">
-                    <div className="text-center space-y-4">
-                      <div className="w-16 h-16 mx-auto rounded-full bg-stone-400/20 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 text-stone-600" />
+                  <div className="w-3/4 h-3/4 rounded-lg border-2 border-dashed border-teal-400/30 flex items-center justify-center backdrop-blur-sm bg-white/40">
+                    <div className="text-center space-y-6">
+                      <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-lg animate-[float_3s_ease-in-out_infinite]">
+                        <Sparkles className="w-10 h-10 text-white" />
                       </div>
-                      <div className="space-y-2">
-                        <div className="inline-block px-3 py-1 rounded-full bg-teal-400/20 border border-teal-400/50 text-xs font-medium text-stone-700">
+                      <div className="space-y-3">
+                        <div className="inline-block px-4 py-2 rounded-full bg-white/90 border border-teal-400/50 text-sm font-medium text-teal-700 shadow-lg backdrop-blur-sm animate-[float_4s_ease-in-out_infinite]">
                           Salicylic Acid
                         </div>
-                        <div className="inline-block px-3 py-1 rounded-full bg-emerald-400/20 border border-emerald-400/50 text-xs font-medium text-stone-700 ml-2">
+                        <div className="inline-block px-4 py-2 rounded-full bg-white/90 border border-emerald-400/50 text-sm font-medium text-emerald-700 ml-2 shadow-lg backdrop-blur-sm animate-[float_5s_ease-in-out_infinite]">
                           Niacinamide
+                        </div>
+                        <div className="block mt-3">
+                          <div className="inline-block px-4 py-2 rounded-full bg-white/90 border border-stone-400/50 text-sm font-medium text-stone-700 shadow-lg backdrop-blur-sm animate-[float_4.5s_ease-in-out_infinite]">
+                            Hyaluronic Acid
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -63,15 +101,15 @@ export default function Home() {
       </section>
 
       {/* Value Props */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 relative">
         <div className="container-wide">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Prop 1 */}
-            <Card className="p-8 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-teal-600" />
+            <Card className="p-8 space-y-4 transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/10 hover:-translate-y-2 hover:border-teal-200 group cursor-pointer">
+              <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-teal-500">
+                <Sparkles className="w-6 h-6 text-teal-600 transition-colors duration-300 group-hover:text-white" />
               </div>
-              <h3 className="text-xl font-display font-medium text-stone-900">
+              <h3 className="text-xl font-display font-medium text-stone-900 transition-colors duration-300 group-hover:text-teal-600">
                 Derm-grade analysis
               </h3>
               <p className="text-stone-600 leading-relaxed">
@@ -81,11 +119,11 @@ export default function Home() {
             </Card>
 
             {/* Prop 2 */}
-            <Card className="p-8 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-                <TrendingDown className="w-6 h-6 text-emerald-600" />
+            <Card className="p-8 space-y-4 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-2 hover:border-emerald-200 group cursor-pointer">
+              <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-500">
+                <TrendingDown className="w-6 h-6 text-emerald-600 transition-colors duration-300 group-hover:text-white" />
               </div>
-              <h3 className="text-xl font-display font-medium text-stone-900">
+              <h3 className="text-xl font-display font-medium text-stone-900 transition-colors duration-300 group-hover:text-emerald-600">
                 Budget optimizer
               </h3>
               <p className="text-stone-600 leading-relaxed">
@@ -95,12 +133,12 @@ export default function Home() {
             </Card>
 
             {/* Prop 3 */}
-            <Card className="p-8 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-stone-600" />
+            <Card className="p-8 space-y-4 transition-all duration-300 hover:shadow-2xl hover:shadow-stone-500/10 hover:-translate-y-2 hover:border-stone-300 group cursor-pointer">
+              <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-stone-600">
+                <Shield className="w-6 h-6 text-stone-600 transition-colors duration-300 group-hover:text-white" />
               </div>
-              <h3 className="text-xl font-display font-medium text-stone-900">
-                Private & secure
+              <h3 className="text-xl font-display font-medium text-stone-900 transition-colors duration-300 group-hover:text-stone-700">
+                Private + Secure
               </h3>
               <p className="text-stone-600 leading-relaxed">
                 Your photos are encrypted and processed securely. We never
@@ -109,11 +147,13 @@ export default function Home() {
             </Card>
           </div>
         </div>
+        {/* Gradient transition to next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-white pointer-events-none" />
       </section>
 
       {/* How It Works */}
       <section className="section-spacing bg-white">
-        <div className="container-narrow">
+        <div className="container-wide">
           <SectionHeading
             eyebrow="Process"
             title="How it works"
@@ -122,56 +162,65 @@ export default function Home() {
             className="mb-16"
           />
 
-          <div className="space-y-12">
-            {[
-              {
-                step: 1,
-                title: "Tell us about your skin",
-                description:
-                  "Answer a few questions about your concerns, goals, and lifestyle.",
-              },
-              {
-                step: 2,
-                title: "Upload 3 photos",
-                description:
-                  "Front, left, and right angles in natural lighting for best results.",
-              },
-              {
-                step: 3,
-                title: "AI analyzes your skin",
-                description:
-                  "Our model detects traits like oiliness, sensitivity, acne, and pigmentation.",
-              },
-              {
-                step: 4,
-                title: "Get your personalized routine",
-                description:
-                  "AM/PM steps mapped to your concerns with ingredient explanations.",
-              },
-              {
-                step: 5,
-                title: "Optimize your budget",
-                description:
-                  "Compare brand picks to budget-friendly alternatives with the same actives.",
-              },
-            ].map((item) => (
-              <div
-                key={item.step}
-                className="flex items-start gap-6 slide-up"
-              >
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-stone-900 text-white flex items-center justify-center text-lg font-medium">
-                  {item.step}
+          <div className="relative max-w-7xl mx-auto">
+            {/* Horizontal timeline line - hidden on mobile */}
+            <div className="hidden md:block absolute top-7 left-0 right-0 h-px bg-stone-200" 
+                 style={{ left: '5%', right: '5%' }} />
+            
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-20 md:gap-4">
+              {[
+                {
+                  step: 1,
+                  title: "Tell us about your skin",
+                  description:
+                    "Answer a few questions about your concerns, goals, and lifestyle.",
+                },
+                {
+                  step: 2,
+                  title: "Upload 3 photos",
+                  description:
+                    "Front, left, and right angles in natural lighting for best results.",
+                },
+                {
+                  step: 3,
+                  title: "AI analyzes your skin",
+                  description:
+                    "Our model detects traits like oiliness, sensitivity, acne, and pigmentation.",
+                },
+                {
+                  step: 4,
+                  title: "Get your personalized routine",
+                  description:
+                    "AM/PM steps mapped to your concerns with ingredient explanations.",
+                },
+                {
+                  step: 5,
+                  title: "Optimize your budget",
+                  description:
+                    "Compare brand picks to budget-friendly alternatives with the same actives.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.step}
+                  className="relative flex flex-col items-center text-center slide-up group cursor-pointer"
+                >
+                  {/* Step number badge */}
+                  <div className="relative z-10 flex-shrink-0 w-14 h-14 rounded-full bg-stone-900 text-white flex items-center justify-center text-lg font-medium shadow-lg mb-4 transition-all duration-300 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-teal-500 group-hover:to-emerald-500 group-hover:shadow-xl">
+                    {item.step}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="space-y-2 transition-all duration-300 group-hover:scale-105">
+                    <h3 className="text-lg font-display font-medium text-stone-900 transition-colors duration-300 group-hover:text-teal-600">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-stone-600 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="pt-1.5">
-                  <h3 className="text-xl font-display font-medium text-stone-900 mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-stone-600 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <div className="mt-12 text-center">
@@ -179,18 +228,18 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      
       {/* Social Proof */}
-      <section className="py-12 border-t border-stone-200">
+      <section className="py-16 bg-stone-50">
         <div className="container-wide">
-          <p className="text-center text-sm text-stone-500 mb-8">
+          <p className="text-center text-sm text-stone-500 mb-10 font-medium tracking-wide uppercase">
             Trusted by thousands of skincare enthusiasts
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-12 opacity-40 grayscale">
+          <div className="flex flex-wrap items-center justify-center gap-16 opacity-50">
             {["Brand A", "Brand B", "Brand C", "Brand D"].map((brand) => (
               <div
                 key={brand}
-                className="text-xl font-medium text-stone-900"
+                className="text-2xl font-display font-semibold text-stone-900 transition-all duration-300 hover:opacity-100 hover:scale-110 cursor-pointer grayscale hover:grayscale-0"
               >
                 {brand}
               </div>
@@ -200,11 +249,11 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-stone-200 py-12">
+      <footer className="border-t border-stone-200 py-12 bg-white">
         <div className="container-wide">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h4 className="font-display text-lg font-medium text-stone-900 mb-4">
+              <h4 className="font-display text-xl font-semibold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mb-4">
                 DermaFi
               </h4>
               <p className="text-sm text-stone-600 leading-relaxed">
@@ -213,51 +262,51 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <h5 className="text-sm font-medium text-stone-900 mb-4">
+              <h5 className="text-sm font-semibold text-stone-900 mb-4">
                 Product
               </h5>
               <ul className="space-y-2 text-sm text-stone-600">
                 <li>
-                  <a href="#" className="hover:text-stone-900">
+                  <a href="#" className="hover:text-teal-600 transition-colors duration-200 hover:translate-x-1 inline-block">
                     How it works
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-stone-900">
+                  <a href="#" className="hover:text-teal-600 transition-colors duration-200 hover:translate-x-1 inline-block">
                     Pricing
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h5 className="text-sm font-medium text-stone-900 mb-4">
+              <h5 className="text-sm font-semibold text-stone-900 mb-4">
                 Company
               </h5>
               <ul className="space-y-2 text-sm text-stone-600">
                 <li>
-                  <a href="#" className="hover:text-stone-900">
+                  <a href="#" className="hover:text-teal-600 transition-colors duration-200 hover:translate-x-1 inline-block">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-stone-900">
+                  <a href="#" className="hover:text-teal-600 transition-colors duration-200 hover:translate-x-1 inline-block">
                     Contact
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h5 className="text-sm font-medium text-stone-900 mb-4">
+              <h5 className="text-sm font-semibold text-stone-900 mb-4">
                 Legal
               </h5>
               <ul className="space-y-2 text-sm text-stone-600">
                 <li>
-                  <a href="#" className="hover:text-stone-900">
+                  <a href="#" className="hover:text-teal-600 transition-colors duration-200 hover:translate-x-1 inline-block">
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-stone-900">
+                  <a href="#" className="hover:text-teal-600 transition-colors duration-200 hover:translate-x-1 inline-block">
                     Terms
                   </a>
                 </li>
