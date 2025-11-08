@@ -340,7 +340,7 @@ export default function OnboardingPage() {
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="gap-2"
+                className="gap-2 hover:bg-stone-100"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Back

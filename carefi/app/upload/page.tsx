@@ -7,7 +7,7 @@ import { UploadZone } from "@/components/UploadZone";
 import { PrivacyNote } from "@/components/PrivacyNote";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, ArrowRight } from "lucide-react";
+import { Lightbulb, ArrowRight, ArrowLeft } from "lucide-react";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -60,23 +60,33 @@ export default function UploadPage() {
           {/* Privacy note */}
           <PrivacyNote />
 
-          {/* Continue button */}
-          <div className="pt-6 border-t border-stone-200">
+          {/* Navigation */}
+          <div className="flex items-center justify-between pt-6 border-t border-stone-200">
             <Button
-              onClick={handleContinue}
-              disabled={files.length !== 3}
-              className="w-full md:w-auto bg-stone-900 hover:bg-stone-800 text-white gap-2"
-              size="lg"
+              variant="ghost"
+              onClick={() => router.push("/onboarding")}
+              className="gap-2 hover:bg-stone-100"
             >
-              Continue to analysis
-              <ArrowRight className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" />
+              Back
             </Button>
-            {files.length < 3 && (
-              <p className="text-sm text-stone-500 mt-3">
-                Upload {3 - files.length} more{" "}
-                {3 - files.length === 1 ? "photo" : "photos"} to continue
-              </p>
-            )}
+            <div className="flex flex-col items-end">
+              <Button
+                onClick={handleContinue}
+                disabled={files.length !== 3}
+                className="gap-2 bg-stone-900 hover:bg-stone-800 text-white"
+                size="lg"
+              >
+                Continue to analysis
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              {files.length < 3 && (
+                <p className="text-sm text-stone-500 mt-3">
+                  Upload {3 - files.length} more{" "}
+                  {3 - files.length === 1 ? "photo" : "photos"} to continue
+                </p>
+              )}
+            </div>
           </div>
         </Card>
 
