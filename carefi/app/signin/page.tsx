@@ -9,7 +9,7 @@ import { SectionHeading } from '@/components/SectionHeading'
 import { PrivacyNote } from '@/components/PrivacyNote'
 import { Mail, Lock, ArrowRight } from 'lucide-react'
 
-export default function SignupPage() {
+export default function SigninPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,10 +34,6 @@ export default function SignupPage() {
   const validatePassword = (password: string): boolean => {
     if (!password) {
       setPasswordError('Password is required')
-      return false
-    }
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters')
       return false
     }
     setPasswordError('')
@@ -67,7 +63,7 @@ export default function SignupPage() {
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 800))
 
-    // TODO: Backend signup implementation
+    // TODO: Backend signin implementation
     // For now, just navigate to analyze page
     router.push('/analyze')
   }
@@ -78,9 +74,9 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-stone-100/50 flex flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <SectionHeading
-          eyebrow="Almost there"
-          title="Create your account"
-          subtitle="Sign up to save your personalized skincare routine and track your progress"
+          eyebrow="Welcome back"
+          title="Sign in to your account"
+          subtitle="Continue your skincare journey and access your personalized routine"
           align="center"
         />
 
@@ -126,7 +122,7 @@ export default function SignupPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="At least 6 characters"
+                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value)
@@ -142,6 +138,20 @@ export default function SignupPage() {
               )}
             </div>
 
+            {/* Forgot Password Link */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="text-sm text-stone-600 hover:text-stone-900 underline"
+                onClick={() => {
+                  // TODO: Navigate to forgot password page
+                  console.log('Forgot password clicked')
+                }}
+              >
+                Forgot password?
+              </button>
+            </div>
+
             {/* Submit Button */}
             <Button
               type="submit"
@@ -149,10 +159,10 @@ export default function SignupPage() {
               disabled={!isFormValid || isSubmitting}
             >
               {isSubmitting ? (
-                'Creating account...'
+                'Signing in...'
               ) : (
                 <>
-                  Create account
+                  Sign in
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </>
               )}
@@ -165,21 +175,21 @@ export default function SignupPage() {
               <div className="w-full border-t border-stone-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-stone-500">Already have an account?</span>
+              <span className="bg-white px-2 text-stone-500">Don't have an account?</span>
             </div>
           </div>
 
-          {/* Sign In Link */}
+          {/* Sign Up Link */}
           <Button
             type="button"
             variant="ghost"
             className="w-full cursor-default"
             onClick={() => {
-              router.push('/signin')
+              router.push('/signup')
             }}
             disabled={isSubmitting}
           >
-            <span className="cursor-pointer">Sign in instead</span>
+            <span className="cursor-pointer">Create account</span>
           </Button>
         </Card>
 
@@ -187,19 +197,8 @@ export default function SignupPage() {
         <div className="mt-6">
           <PrivacyNote />
         </div>
-
-        {/* Terms */}
-        <p className="text-center text-xs text-stone-500 mt-4">
-          By creating an account, you agree to our{' '}
-          <a href="#" className="underline hover:text-stone-700">
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a href="#" className="underline hover:text-stone-700">
-            Privacy Policy
-          </a>
-        </p>
       </div>
     </div>
   )
 }
+
