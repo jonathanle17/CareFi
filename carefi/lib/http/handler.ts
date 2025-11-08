@@ -191,7 +191,7 @@ export function createHandler<TSchema extends z.ZodTypeAny>(
       const body = await parseAndValidateBody(req, config.schema);
 
       // Call the handler
-      const response = await config.handler(req, body as z.infer<TSchema>);
+      const response = await config.handler(req, body as any);
 
       // Add request ID to response headers for tracing
       response.headers.set('X-Request-ID', requestId);

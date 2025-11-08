@@ -19,17 +19,15 @@ import { z } from 'zod';
  */
 export const signupSchema = z.object({
   email: z
-    .string({
-      required_error: 'Email is required',
-    })
+    .string()
+    .min(1, 'Email is required')
     .email('Invalid email address')
     .toLowerCase()
     .trim(),
 
   password: z
-    .string({
-      required_error: 'Password is required',
-    })
+    .string()
+    .min(1, 'Password is required')
     .min(8, 'Password must be at least 8 characters')
     .regex(/[a-zA-Z]/, 'Password must contain at least one letter')
     .regex(/[0-9]/, 'Password must contain at least one number'),
@@ -66,16 +64,15 @@ export type SignupInput = z.infer<typeof signupSchema>;
  */
 export const loginSchema = z.object({
   email: z
-    .string({
-      required_error: 'Email is required',
-    })
+    .string()
+    .min(1, 'Email is required')
     .email('Invalid email address')
     .toLowerCase()
     .trim(),
 
-  password: z.string({
-    required_error: 'Password is required',
-  }),
+  password: z
+    .string()
+    .min(1, 'Password is required'),
 });
 
 /**
@@ -88,9 +85,8 @@ export type LoginInput = z.infer<typeof loginSchema>;
  */
 export const passwordResetRequestSchema = z.object({
   email: z
-    .string({
-      required_error: 'Email is required',
-    })
+    .string()
+    .min(1, 'Email is required')
     .email('Invalid email address')
     .toLowerCase()
     .trim(),
@@ -118,10 +114,10 @@ export type PasswordResetRequestInput = z.infer<typeof passwordResetRequestSchem
  * }
  * ```
  */
-export function formatZodError(error: z.ZodError): Record<string, string> {
+export function formatZodError(error: z.ZodError<any>): Record<string, string> {
   const formatted: Record<string, string> = {};
 
-  error.errors.forEach((err) => {
+  error.issues.forEach((err) => {
     const path = err.path.join('.');
     formatted[path] = err.message;
   });
