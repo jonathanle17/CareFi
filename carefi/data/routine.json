@@ -1,0 +1,62 @@
+{
+  "am": [
+    {
+      "step": 1,
+      "productType": "Cleanser",
+      "actives": ["Salicylic Acid"],
+      "rationale": "Gentle exfoliation to control oil and prevent breakouts without over-stripping skin.",
+      "productIds": ["cerave-cleanser"]
+    },
+    {
+      "step": 2,
+      "productType": "Toner",
+      "actives": ["Niacinamide", "Centella Asiatica"],
+      "rationale": "Soothing hydration that reduces inflammation and balances oil production.",
+      "productIds": ["ordinary-niacinamide"]
+    },
+    {
+      "step": 3,
+      "productType": "Moisturizer",
+      "actives": ["Ceramides", "Hyaluronic Acid"],
+      "rationale": "Lightweight hydration to strengthen barrier without clogging pores.",
+      "productIds": ["la-roche-cicaplast"]
+    },
+    {
+      "step": 4,
+      "productType": "Sunscreen",
+      "actives": ["Zinc Oxide"],
+      "rationale": "Mineral protection that won't irritate sensitive, acne-prone skin.",
+      "productIds": ["elta-md-uv"]
+    }
+  ],
+  "pm": [
+    {
+      "step": 1,
+      "productType": "Oil Cleanser",
+      "actives": ["Jojoba Oil"],
+      "rationale": "Dissolves sebum and makeup without disrupting skin barrier.",
+      "productIds": []
+    },
+    {
+      "step": 2,
+      "productType": "Cleanser",
+      "actives": ["Salicylic Acid"],
+      "rationale": "Second cleanse to thoroughly remove impurities and exfoliate.",
+      "productIds": ["cerave-cleanser"]
+    },
+    {
+      "step": 3,
+      "productType": "Treatment",
+      "actives": ["Azelaic Acid"],
+      "rationale": "Multi-tasking active that targets acne, redness, and PIH simultaneously.",
+      "productIds": ["ordinary-azelaic"]
+    },
+    {
+      "step": 4,
+      "productType": "Moisturizer",
+      "actives": ["Ceramides", "Centella Asiatica"],
+      "rationale": "Reparative hydration to support overnight skin recovery.",
+      "productIds": ["la-roche-cicaplast"]
+    }
+  ]
+}
