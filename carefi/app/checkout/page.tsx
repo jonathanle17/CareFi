@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Card } from "@/components/ui/card";
@@ -17,6 +17,11 @@ export default function CheckoutPage() {
   const [expiry, setExpiry] = useState("");
   const [cvc, setCvc] = useState("");
   const [name, setName] = useState("");
+  const [cardNumberError, setCardNumberError] = useState<string>("");
+  const [expiryError, setExpiryError] = useState<string>("");
+  const [cvcError, setCvcError] = useState<boolean>(false);
+  const [nameError, setNameError] = useState<boolean>(false);
+  const prevExpiryRef = useRef<string>("");
 
   const orderItems = [
     { name: "Cetaphil Gentle Skin Cleanser", price: 11.99 },
@@ -30,6 +35,49 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate all fields
+    const cardDigits = cardNumber.replace(/\s/g, "");
+    const expiryDigits = expiry.replace(/\s/g, "").replace(/\//g, "");
+    
+    let isValid = true;
+    
+    if (cardDigits.length !== 16) {
+      setCardNumberError("Card number must be 16 digits");
+      isValid = false;
+    }
+    
+    if (expiryDigits.length !== 4) {
+      setExpiryError("Expiry date is required");
+      isValid = false;
+    } else {
+      const month = parseInt(expiryDigits.slice(0, 2));
+      if (month < 1 || month > 12) {
+        setExpiryError("Month must be between 01 and 12");
+        isValid = false;
+      } else {
+        setExpiryError("");
+      }
+    }
+    
+    if (cvc.length < 3) {
+      setCvcError(true);
+      isValid = false;
+    } else {
+      setCvcError(false);
+    }
+    
+    if (name.trim().length === 0) {
+      setNameError(true);
+      isValid = false;
+    } else {
+      setNameError(false);
+    }
+    
+    if (!isValid) {
+      return;
+    }
+    
     setIsProcessing(true);
 
     // Simulate payment processing
@@ -70,7 +118,7 @@ export default function CheckoutPage() {
                 </h3>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <div>
                   <label className="block text-sm font-medium text-stone-700 mb-2">
                     Card number
@@ -79,13 +127,30 @@ export default function CheckoutPage() {
                     type="text"
                     placeholder="4242 4242 4242 4242"
                     value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
+                    onChange={(e) => {
+                      // Only allow digits and spaces
+                      const value = e.target.value.replace(/[^\d\s]/g, "");
+                      // Format with spaces every 4 digits
+                      const formatted = value
+                        .replace(/\s/g, "")
+                        .match(/.{1,4}/g)
+                        ?.join(" ") || value.replace(/\s/g, "");
+                      setCardNumber(formatted);
+                      // Clear error when user starts typing
+                      if (cardNumberError) {
+                        setCardNumberError("");
+                      }
+                    }}
                     maxLength={19}
-                    required
+                    className={cardNumberError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                   />
-                  <p className="text-xs text-stone-500 mt-1">
-                    Use test card: 4242 4242 4242 4242
-                  </p>
+                  {cardNumberError ? (
+                    <p className="text-sm text-red-600 mt-1">{cardNumberError}</p>
+                  ) : (
+                    <p className="text-xs text-stone-500 mt-1">
+                      Use test card: 4242 4242 4242 4242
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -97,10 +162,47 @@ export default function CheckoutPage() {
                       type="text"
                       placeholder="MM / YY"
                       value={expiry}
-                      onChange={(e) => setExpiry(e.target.value)}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        // Only allow digits and the separator
+                        const value = inputValue.replace(/[^\d\s/]/g, "").replace(/\s*\/\s*/g, "");
+                        
+                        // Check if user is deleting (input is getting shorter)
+                        const isDeleting = value.length < prevExpiryRef.current.replace(/\s*\/\s*/g, "").length;
+                        prevExpiryRef.current = value;
+                        
+                        // Format as MM / YY
+                        let formatted = value;
+                        if (value.length > 2) {
+                          formatted = value.slice(0, 2) + " / " + value.slice(2, 4);
+                          // Validate month when user has entered 2+ digits
+                          const month = parseInt(value.slice(0, 2));
+                          if (month > 12 || month < 1) {
+                            setExpiryError("Month must be between 01 and 12");
+                          } else {
+                            setExpiryError("");
+                          }
+                        } else if (value.length === 2 && !isDeleting) {
+                          // Only add " / " if user is typing, not deleting
+                          formatted = value + " / ";
+                          // Validate month when user has entered 2 digits
+                          const month = parseInt(value);
+                          if (month > 12 || month < 1) {
+                            setExpiryError("Month must be between 01 and 12");
+                          } else {
+                            setExpiryError("");
+                          }
+                        } else {
+                          setExpiryError("");
+                        }
+                        setExpiry(formatted);
+                      }}
                       maxLength={7}
-                      required
+                      className={expiryError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                     />
+                    {expiryError && (
+                      <p className="text-sm text-red-600 mt-1">{expiryError}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-2">
@@ -110,9 +212,14 @@ export default function CheckoutPage() {
                       type="text"
                       placeholder="123"
                       value={cvc}
-                      onChange={(e) => setCvc(e.target.value)}
+                      onChange={(e) => {
+                        // Only allow digits
+                        const value = e.target.value.replace(/[^\d]/g, "");
+                        setCvc(value);
+                        setCvcError(false);
+                      }}
                       maxLength={4}
-                      required
+                      className={cvcError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                     />
                   </div>
                 </div>
@@ -125,8 +232,13 @@ export default function CheckoutPage() {
                     type="text"
                     placeholder="John Doe"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
+                    onChange={(e) => {
+                      // Only allow letters and spaces
+                      const value = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                      setName(value);
+                      setNameError(false);
+                    }}
+                    className={nameError ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}
                   />
                 </div>
 
@@ -134,7 +246,7 @@ export default function CheckoutPage() {
                   <Button
                     type="submit"
                     disabled={isProcessing}
-                    className="w-full bg-stone-900 hover:bg-stone-800 gap-2"
+                    className="w-full bg-stone-900 hover:bg-stone-800 text-white gap-2"
                     size="lg"
                   >
                     {isProcessing ? (
@@ -224,7 +336,7 @@ export default function CheckoutPage() {
 
       {/* Success Dialog */}
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
             <div className="mx-auto w-16 h-16 rounded-full bg-stone-200 flex items-center justify-center mb-4">
               <Check className="w-8 h-8 text-stone-700" />
@@ -239,7 +351,7 @@ export default function CheckoutPage() {
             </p>
             <Button
               onClick={handleSuccessClose}
-              className="w-full bg-stone-900 hover:bg-stone-800"
+              className="w-full bg-stone-900 hover:bg-stone-800 text-white"
             >
               View your summary
             </Button>
