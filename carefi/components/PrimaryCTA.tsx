@@ -19,13 +19,13 @@ export function PrimaryCTA({
   variant = "primary",
 }: PrimaryCTAProps) {
   const baseStyles =
-    "inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+    "inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 relative overflow-hidden group";
 
   const variantStyles = {
     primary:
-      "bg-stone-900 text-white hover:bg-stone-800 hover:-translate-y-0.5 hover:shadow-lg focus:ring-stone-900",
+      "bg-gradient-to-r from-stone-900 to-stone-800 text-white hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-900/25 focus:ring-stone-900 before:absolute before:inset-0 before:bg-gradient-to-r before:from-teal-500 before:to-emerald-500 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
     secondary:
-      "border border-stone-200 bg-white text-stone-900 hover:bg-stone-50 hover:-translate-y-0.5 hover:shadow-md focus:ring-stone-900",
+      "border-2 border-stone-200 bg-white text-stone-900 hover:bg-stone-50 hover:-translate-y-1 hover:shadow-xl hover:border-teal-300 focus:ring-stone-900",
   };
 
   return (
@@ -33,8 +33,10 @@ export function PrimaryCTA({
       href={href}
       className={cn(baseStyles, variantStyles[variant], className)}
     >
-      {label}
-      {showArrow && <ArrowRight className="w-4 h-4" />}
+      <span className="relative z-10 flex items-center gap-2">
+        {label}
+        {showArrow && <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />}
+      </span>
     </Link>
   );
 }
