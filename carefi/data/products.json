@@ -1,0 +1,74 @@
+[
+  {
+    "id": "cerave-cleanser",
+    "name": "CeraVe Foaming Facial Cleanser",
+    "brand": "CeraVe",
+    "price": 14.99,
+    "merchants": ["Amazon", "Sephora"],
+    "actives": ["Ceramides", "Niacinamide", "Hyaluronic Acid"],
+    "link": "https://www.amazon.com/dp/B01N1LL62W"
+  },
+  {
+    "id": "pc-bha",
+    "name": "Paula's Choice 2% BHA Liquid Exfoliant",
+    "brand": "Paula's Choice",
+    "price": 35.0,
+    "merchants": ["Sephora", "Amazon"],
+    "actives": ["Salicylic Acid"],
+    "link": "https://www.sephora.com/product/skin-perfecting-2-bha-liquid-exfoliant"
+  },
+  {
+    "id": "cosrx-snail",
+    "name": "COSRX Advanced Snail 96 Mucin Power Essence",
+    "brand": "COSRX",
+    "price": 25.0,
+    "merchants": ["YesStyle", "Amazon"],
+    "actives": ["Snail Mucin"],
+    "link": "https://www.yesstyle.com/en/cosrx-advanced-snail-96-mucin-power-essence"
+  },
+  {
+    "id": "ordinary-niacinamide",
+    "name": "The Ordinary Niacinamide 10% + Zinc 1%",
+    "brand": "The Ordinary",
+    "price": 6.0,
+    "merchants": ["Sephora"],
+    "actives": ["Niacinamide", "Zinc"],
+    "link": "https://www.sephora.com/product/niacinamide-10-zinc-1-P427417"
+  },
+  {
+    "id": "la-roche-cicaplast",
+    "name": "La Roche-Posay Cicaplast Baume B5",
+    "brand": "La Roche-Posay",
+    "price": 15.99,
+    "merchants": ["Amazon", "Sephora"],
+    "actives": ["Panthenol", "Madecassoside"],
+    "link": "https://www.amazon.com/dp/B0060O8R1Q"
+  },
+  {
+    "id": "elta-md-uv",
+    "name": "EltaMD UV Clear Broad-Spectrum SPF 46",
+    "brand": "EltaMD",
+    "price": 41.0,
+    "merchants": ["Amazon"],
+    "actives": ["Zinc Oxide", "Niacinamide"],
+    "link": "https://www.amazon.com/dp/B002MSN3QQ"
+  },
+  {
+    "id": "ordinary-azelaic",
+    "name": "The Ordinary Azelaic Acid Suspension 10%",
+    "brand": "The Ordinary",
+    "price": 12.0,
+    "merchants": ["Sephora"],
+    "actives": ["Azelaic Acid"],
+    "link": "https://www.sephora.com/product/azelaic-acid-suspension-10-P427417"
+  },
+  {
+    "id": "inkey-list-retinol",
+    "name": "The INKEY List Retinol Serum",
+    "brand": "The INKEY List",
+    "price": 9.99,
+    "merchants": ["Sephora", "Amazon"],
+    "actives": ["Retinol"],
+    "link": "https://www.sephora.com/product/retinol-serum"
+  }
+]
