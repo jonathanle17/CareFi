@@ -95,17 +95,17 @@ export default function OnboardingPage() {
 
         {/* Progress bar */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-3">
             {steps.map((step, index) => (
               <div
                 key={step.id}
-                className={`flex-1 h-1.5 rounded-full ${
+                className={`flex-1 h-2.5 rounded-full ${
                   index <= currentStep ? "bg-stone-900" : "bg-stone-200"
                 } ${index < steps.length - 1 ? "mr-2" : ""}`}
               />
             ))}
           </div>
-          <p className="text-sm text-stone-500 text-center">
+          <p className="text-base font-medium text-stone-700 text-center">
             {steps[currentStep].title}
           </p>
         </div>
