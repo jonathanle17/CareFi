@@ -130,7 +130,7 @@ export default function SignupPage() {
       }
 
       // Success! Navigate to the next page
-      router.push('/analyze')
+      router.push('/onboarding')
     } catch (error) {
       // Network or unexpected error
       console.error('Signup error:', error)

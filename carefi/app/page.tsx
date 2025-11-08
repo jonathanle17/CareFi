@@ -51,7 +51,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <PrimaryCTA label="Get my skin report" href="/onboarding" />
+                <PrimaryCTA label="Get my skin report" href="/signup" />
                 <PrimaryCTA
                   label="Start with 3 photos"
                   href="/upload"
