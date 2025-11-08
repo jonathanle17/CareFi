@@ -23,7 +23,7 @@ export default function AnalyzePage() {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "low":
-        return "bg-emerald-100 text-emerald-700 border-emerald-200";
+        return "bg-stone-200 text-stone-700 border-stone-300";
       case "moderate":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "high":
@@ -82,10 +82,10 @@ export default function AnalyzePage() {
         {isComplete && (
           <div className="space-y-8">
             {/* Detection summary */}
-            <Card className="p-8 md:p-12 bg-gradient-to-br from-teal-50 to-emerald-50 border-teal-200">
+            <Card className="p-8 md:p-12 bg-gradient-to-br from-stone-100 to-stone-50 border-stone-300">
               <div className="text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-100">
-                  <Sparkles className="w-8 h-8 text-teal-600" />
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-200">
+                  <Sparkles className="w-8 h-8 text-stone-700" />
                 </div>
                 <h3 className="text-2xl font-display font-medium text-stone-900">
                   Analysis complete

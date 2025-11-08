@@ -30,8 +30,8 @@ export default function SummaryPage() {
       <div className="container-narrow">
         {/* Header */}
         <div className="mb-12 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-100 mb-6">
-            <CheckCircle className="w-8 h-8 text-teal-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-stone-200 mb-6">
+            <CheckCircle className="w-8 h-8 text-stone-700" />
           </div>
           <SectionHeading
             title="Your personalized plan is ready"
@@ -92,7 +92,7 @@ export default function SummaryPage() {
                         {item.actives.map((active) => (
                           <span
                             key={active}
-                            className="text-xs px-2 py-0.5 rounded-full bg-teal-100 text-teal-700"
+                            className="text-xs px-2 py-0.5 rounded-full bg-stone-200 text-stone-700"
                           >
                             {active}
                           </span>
@@ -139,13 +139,13 @@ export default function SummaryPage() {
           </Card>
 
           {/* Budget recap */}
-          <Card className="p-8 bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 space-y-4">
+          <Card className="p-8 bg-gradient-to-br from-stone-100 to-stone-50 border-stone-300 space-y-4">
             <h3 className="text-xl font-display font-medium text-stone-900">
               Budget optimization
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 rounded-lg bg-white/50">
-                <p className="text-3xl font-display font-semibold text-emerald-700">
+                <p className="text-3xl font-display font-semibold text-stone-700">
                   $29.99
                 </p>
                 <p className="text-sm text-stone-600 mt-1">
@@ -159,7 +159,7 @@ export default function SummaryPage() {
                 <p className="text-sm text-stone-600 mt-1">Brand alternatives</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-white/50">
-                <p className="text-3xl font-display font-semibold text-emerald-700">
+                <p className="text-3xl font-display font-semibold text-stone-700">
                   72%
                 </p>
                 <p className="text-sm text-stone-600 mt-1">Total savings</p>

@@ -63,7 +63,7 @@ export function CompareRow({ step, brand, dupes }: CompareRowProps) {
             </span>
           )}
         </div>
-        <p className="text-base font-semibold text-emerald-700">
+        <p className="text-base font-semibold text-stone-700">
           ${bestDupe.price.toFixed(2)}
         </p>
       </div>
@@ -73,7 +73,7 @@ export function CompareRow({ step, brand, dupes }: CompareRowProps) {
         <div className="flex items-center gap-2">
           {activeMatch ? (
             <>
-              <Check className="w-4 h-4 text-emerald-600" />
+              <Check className="w-4 h-4 text-stone-700" />
               <span className="text-xs text-stone-600">Match</span>
             </>
           ) : (

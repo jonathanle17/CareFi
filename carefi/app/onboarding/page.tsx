@@ -370,7 +370,7 @@ export default function OnboardingPage() {
                 </Badge>
               ))}
               {formData.goals.map((goal) => (
-                <Badge key={goal} variant="outline" className="bg-teal-50">
+                <Badge key={goal} variant="outline" className="bg-stone-100">
                   {goal}
                 </Badge>
               ))}

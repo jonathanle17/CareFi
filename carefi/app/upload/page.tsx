@@ -38,14 +38,14 @@ export default function UploadPage() {
           <UploadZone maxFiles={3} onFiles={setFiles} />
 
           {/* Tips */}
-          <div className="rounded-lg bg-teal-50 border border-teal-200 p-6">
+          <div className="rounded-lg bg-stone-100 border border-stone-300 p-6">
             <div className="flex items-start gap-3">
-              <Lightbulb className="w-5 h-5 text-teal-600 mt-0.5 flex-shrink-0" />
+              <Lightbulb className="w-5 h-5 text-stone-700 mt-0.5 flex-shrink-0" />
               <div className="space-y-2">
-                <p className="text-sm font-medium text-teal-900">
+                <p className="text-sm font-medium text-stone-900">
                   Tips for best results:
                 </p>
-                <ul className="text-sm text-teal-800 space-y-1 list-disc list-inside">
+                <ul className="text-sm text-stone-700 space-y-1 list-disc list-inside">
                   <li>Use natural, even lighting (near a window is ideal)</li>
                   <li>Remove heavy makeup or filters</li>
                   <li>

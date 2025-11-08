@@ -134,7 +134,7 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
         onDragLeave={handleDragLeave}
         className={cn(
           "relative rounded-2xl border-2 border-dashed border-stone-300 bg-stone-50 p-12 text-center transition-all duration-200",
-          isDragging && "border-teal-400 bg-teal-50",
+          isDragging && "border-stone-400 bg-stone-100",
           files.length >= maxFiles && "opacity-50 pointer-events-none"
         )}
       >
@@ -188,7 +188,7 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
               </div>
               {/* Face box overlay */}
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-dashed border-teal-400/50 rounded-lg" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-dashed border-stone-400/50 rounded-lg" />
               </div>
             </div>
           ))}

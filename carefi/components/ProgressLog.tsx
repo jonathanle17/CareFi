@@ -17,8 +17,8 @@ export function ProgressLog({ items, className }: ProgressLogProps) {
           className="flex items-center gap-3 text-sm transition-opacity duration-200"
         >
           {item.status === "done" ? (
-            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-stone-200 flex items-center justify-center">
+              <Check className="w-3.5 h-3.5 text-stone-700" />
             </div>
           ) : (
             <Loader2 className="flex-shrink-0 w-5 h-5 text-stone-400 animate-spin" />

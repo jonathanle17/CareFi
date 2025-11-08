@@ -107,18 +107,18 @@ export default function BudgetPage() {
         </div>
 
         {/* Savings banner */}
-        <Card className="p-8 mb-8 bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200">
+        <Card className="p-8 mb-8 bg-gradient-to-br from-stone-100 to-stone-50 border-stone-300">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
               <div className="inline-flex items-center gap-2 mb-3">
-                <TrendingDown className="w-6 h-6 text-emerald-600" />
+                <TrendingDown className="w-6 h-6 text-stone-700" />
                 <h3 className="text-2xl font-display font-medium text-stone-900">
                   Same actives, smarter spend
                 </h3>
               </div>
               <p className="text-lg text-stone-700">
                 Found the same ingredients for{" "}
-                <span className="font-semibold text-emerald-700">
+                <span className="font-semibold text-stone-900">
                   ${totalDupePrice.toFixed(2)}
                 </span>{" "}
                 vs{" "}
@@ -177,7 +177,7 @@ export default function BudgetPage() {
             </h3>
             <div className="space-y-2">
               <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-display font-semibold text-emerald-700">
+                <span className="text-4xl font-display font-semibold text-stone-700">
                   ${totalDupePrice.toFixed(2)}
                 </span>
                 <span className="text-xl text-stone-400 line-through">

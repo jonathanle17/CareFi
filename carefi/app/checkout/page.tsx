@@ -319,11 +319,11 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="pt-4 border-t border-stone-200">
-                  <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
-                    <p className="text-sm font-medium text-emerald-900 mb-1">
+                  <div className="rounded-lg bg-stone-100 border border-stone-300 p-4">
+                    <p className="text-sm font-medium text-stone-900 mb-1">
                       You're saving $76.01
                     </p>
-                    <p className="text-xs text-emerald-700">
+                    <p className="text-xs text-stone-700">
                       Compared to brand-name alternatives
                     </p>
                   </div>
@@ -338,8 +338,8 @@ export default function CheckoutPage() {
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-              <Check className="w-8 h-8 text-emerald-600" />
+            <div className="mx-auto w-16 h-16 rounded-full bg-stone-200 flex items-center justify-center mb-4">
+              <Check className="w-8 h-8 text-stone-700" />
             </div>
             <DialogTitle className="text-center text-2xl font-display">
               Test payment successful!

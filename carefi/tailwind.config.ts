@@ -15,9 +15,9 @@ const config: Config = {
       },
       colors: {
         brand: {
-          DEFAULT: "#2dd4bf", // teal-400
-          success: "#34d399", // emerald-400
-          warning: "#fb7185", // rose-400
+          DEFAULT: "#A89175", // soft taupe (medium skin tone)
+          success: "#D4C5B0", // light beige (fair-medium skin tone)
+          warning: "#C9A88A", // warm tan (medium-tan skin tone)
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

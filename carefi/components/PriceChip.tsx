@@ -15,7 +15,7 @@ export function PriceChip({ deltaPct, className }: PriceChipProps) {
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium",
         isPositive
-          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+          ? "bg-stone-100 text-stone-700 border border-stone-300"
           : "bg-rose-50 text-rose-700 border border-rose-200",
         className
       )}
