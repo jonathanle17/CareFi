@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { SectionHeading } from "@/components/SectionHeading";
 import { UploadZone } from "@/components/UploadZone";
 import { PrivacyNote } from "@/components/PrivacyNote";
@@ -96,14 +97,25 @@ export default function UploadPage() {
             Example angles:
           </p>
           <div className="grid grid-cols-3 gap-4">
-            {["Front", "Left 45°", "Right 45°"].map((angle) => (
+            {[
+              { label: "Left 45°", image: "/example-left.jpeg" },
+              { label: "Front", image: "/example-front.jpeg" },
+              { label: "Right 45°", image: "/example-right.jpeg" },
+            ].map(({ label, image }) => (
               <div
-                key={angle}
+                key={label}
                 className="aspect-square rounded-xl bg-stone-200 border border-stone-300 flex items-center justify-center relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-stone-300 to-stone-400 opacity-50" />
-                <div className="relative z-10 w-2/3 h-2/3 border-2 border-dashed border-stone-500/50 rounded-lg flex items-end justify-center pb-3">
-                  <p className="text-xs font-medium text-stone-700">{angle}</p>
+                <Image
+                  src={image}
+                  alt={`Example ${label} angle`}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10">
+                  <p className="text-xs font-medium text-white drop-shadow-md">
+                    {label}
+                  </p>
                 </div>
               </div>
             ))}
