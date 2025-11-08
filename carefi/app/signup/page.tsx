@@ -251,7 +251,7 @@ export default function SignupPage() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-stone-900 hover:bg-stone-800 text-white"
+              className="w-full bg-stone-900 hover:bg-stone-800 text-white cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
               disabled={!isFormValid || isSubmitting}
             >
               {isSubmitting ? (
@@ -279,14 +279,13 @@ export default function SignupPage() {
           <Button
             type="button"
             variant="ghost"
-            className="w-full"
+            className="w-full cursor-default"
             onClick={() => {
-              // TODO: Navigate to sign-in page when it exists
-              console.log('Sign in clicked')
+              router.push('/signin')
             }}
             disabled={isSubmitting}
           >
-            Sign in instead
+            <span className="cursor-pointer">Sign in instead</span>
           </Button>
         </Card>
 

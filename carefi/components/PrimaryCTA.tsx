@@ -23,9 +23,9 @@ export function PrimaryCTA({
 
   const variantStyles = {
     primary:
-      "bg-gradient-to-r from-stone-900 to-stone-800 text-white hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-900/25 focus:ring-stone-900 before:absolute before:inset-0 before:bg-gradient-to-r before:from-stone-600 before:to-stone-500 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
+      "bg-gradient-to-r from-slate-800 to-slate-700 text-white hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-800/25 focus:ring-slate-800 before:absolute before:inset-0 before:bg-gradient-to-r before:from-slate-600 before:to-slate-500 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100",
     secondary:
-      "border-2 border-stone-200 bg-white text-stone-900 hover:bg-stone-50 hover:-translate-y-1 hover:shadow-xl hover:border-stone-300 focus:ring-stone-900",
+      "border-2 border-gray-200 bg-white text-gray-900 hover:bg-blue-50 hover:-translate-y-1 hover:shadow-xl hover:border-gray-300 focus:ring-slate-800",
   };
 
   return (

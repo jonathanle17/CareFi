@@ -15,7 +15,7 @@ const config: Config = {
       },
       colors: {
         brand: {
-          DEFAULT: "#A89175", // soft taupe (medium skin tone)
+          DEFAULT: "#4d688a", // dark blue-grey
           success: "#D4C5B0", // light beige (fair-medium skin tone)
           warning: "#C9A88A", // warm tan (medium-tan skin tone)
         },
