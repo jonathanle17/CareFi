@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -15,19 +15,71 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [error, setError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isDuplicate = useCallback(
+    (file: File, existingFiles: File[]): boolean => {
+      return existingFiles.some(
+        (existingFile) =>
+          existingFile.name === file.name &&
+          existingFile.size === file.size &&
+          existingFile.lastModified === file.lastModified
+      );
+    },
+    []
+  );
 
   const handleFiles = useCallback(
     (newFiles: FileList | null) => {
       if (!newFiles) return;
 
-      const fileArray = Array.from(newFiles).slice(0, maxFiles - files.length);
-      const updatedFiles = [...files, ...fileArray].slice(0, maxFiles);
+      setError("");
+
+      const fileArray = Array.from(newFiles);
+      const validFiles: File[] = [];
+      const duplicateNames: string[] = [];
+
+      // Check for duplicates against existing files and within the new batch
+      fileArray.forEach((file) => {
+        const isDuplicateInExisting = isDuplicate(file, files);
+        const isDuplicateInBatch = validFiles.some(
+          (validFile) =>
+            validFile.name === file.name &&
+            validFile.size === file.size &&
+            validFile.lastModified === file.lastModified
+        );
+
+        if (isDuplicateInExisting || isDuplicateInBatch) {
+          duplicateNames.push(file.name);
+        } else {
+          validFiles.push(file);
+        }
+      });
+
+      // Show error if duplicates were found
+      if (duplicateNames.length > 0) {
+        setError(
+          `Duplicate photo detected: ${duplicateNames.join(", ")}. Please upload a different photo.`
+        );
+      }
+
+      // Reset file input to allow selecting the same file again (must happen before early return)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      // Only add non-duplicate files
+      const filesToAdd = validFiles.slice(0, maxFiles - files.length);
+      if (filesToAdd.length === 0) return;
+
+      const updatedFiles = [...files, ...filesToAdd].slice(0, maxFiles);
 
       setFiles(updatedFiles);
       onFiles(updatedFiles);
 
       // Generate previews
-      fileArray.forEach((file) => {
+      filesToAdd.forEach((file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           setPreviews((prev) => [...prev, reader.result as string]);
@@ -35,7 +87,7 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
         reader.readAsDataURL(file);
       });
     },
-    [files, maxFiles, onFiles]
+    [files, maxFiles, onFiles, isDuplicate]
   );
 
   const handleDrop = useCallback(
@@ -62,11 +114,19 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
     const updatedPreviews = previews.filter((_, i) => i !== index);
     setFiles(updatedFiles);
     setPreviews(updatedPreviews);
+    setError(""); // Clear error when file is removed
     onFiles(updatedFiles);
   };
 
   return (
     <div className={cn("space-y-4", className)}>
+      {/* Error message */}
+      {error && (
+        <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+          <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
+
       {/* Drop zone */}
       <div
         onDrop={handleDrop}
@@ -79,6 +139,7 @@ export function UploadZone({ maxFiles, onFiles, className }: UploadZoneProps) {
         )}
       >
         <input
+          ref={fileInputRef}
           type="file"
           multiple
           accept="image/*"
