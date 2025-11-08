@@ -1,0 +1,324 @@
+openapi: 3.0.3
+info:
+  title: CareFi API
+  description: |
+    CareFi API provides user authentication and skincare routine management.
+
+    ## Features
+    - User signup and authentication
+    - Password hashing with bcrypt
+    - Standardized error responses
+    - Request validation with Zod
+
+    ## Error Codes
+    All error responses include a stable error code for programmatic handling:
+    - `bad_request/*` - Invalid input (400)
+    - `unauthorized/*` - Missing/invalid authentication (401)
+    - `forbidden/*` - Insufficient permissions (403)
+    - `not_found/*` - Resource not found (404)
+    - `conflict/*` - Resource conflict (409)
+    - `internal/*` - Server error (500)
+  version: 1.0.0
+  contact:
+    name: CareFi Support
+    email: support@carefi.example.com
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.carefi.example.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and account management
+
+paths:
+  /api/signup:
+    post:
+      summary: Create new user account
+      description: |
+        Register a new user with email and password.
+
+        **Process:**
+        1. Validates input (email format, password strength)
+        2. Creates Supabase Auth user
+        3. Hashes password with bcrypt (12 rounds)
+        4. Stores user profile with password hash
+        5. Returns sanitized user data
+
+        **Rollback:**
+        If profile creation fails, the auth user is automatically deleted.
+      operationId: signup
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+            examples:
+              complete:
+                summary: Complete signup
+                value:
+                  email: user@example.com
+                  password: SecurePass123
+                  displayName: John Doe
+              minimal:
+                summary: Minimal signup (no display name)
+                value:
+                  email: user@example.com
+                  password: SecurePass123
+      responses:
+        '201':
+          description: User account created successfully
+          headers:
+            X-Request-ID:
+              description: Unique request identifier for tracing
+              schema:
+                type: string
+                example: req_1699564800000_abc123def
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccessResponse'
+              examples:
+                success:
+                  summary: Successful signup
+                  value:
+                    success: true
+                    data:
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      email: user@example.com
+                      displayName: John Doe
+                      onboardingCompleted: false
+        '400':
+          description: Invalid input or validation error
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validation_error:
+                  summary: Validation errors
+                  value:
+                    success: false
+                    error:
+                      code: bad_request/invalid_input
+                      message: Invalid input
+                      details:
+                        email: Invalid email address
+                        password: Password must be at least 8 characters
+                invalid_json:
+                  summary: Invalid JSON
+                  value:
+                    success: false
+                    error:
+                      code: bad_request/invalid_json
+                      message: Request body must be valid JSON
+                missing_content_type:
+                  summary: Missing Content-Type header
+                  value:
+                    success: false
+                    error:
+                      code: bad_request/invalid_content_type
+                      message: Content-Type must be application/json
+        '405':
+          description: Method not allowed (must be POST)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: method_not_allowed
+                  message: Method GET not allowed. Allowed methods POST
+        '409':
+          description: Email already registered
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                email_in_use:
+                  summary: Duplicate email
+                  value:
+                    success: false
+                    error:
+                      code: conflict/email_in_use
+                      message: Email already registered
+        '413':
+          description: Request body too large (exceeds 1MB)
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                error:
+                  code: bad_request/payload_too_large
+                  message: Request body exceeds 1048576 bytes
+        '500':
+          description: Internal server error
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                server_error:
+                  summary: Unexpected error
+                  value:
+                    success: false
+                    error:
+                      code: internal/server_error
+                      message: Failed to create user account
+
+components:
+  headers:
+    X-Request-ID:
+      description: Unique request identifier for tracing and debugging
+      schema:
+        type: string
+        example: req_1699564800000_abc123def
+
+  schemas:
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address (will be lowercased)
+          example: user@example.com
+          minLength: 3
+          maxLength: 255
+        password:
+          type: string
+          format: password
+          description: User password (min 8 chars, ≥1 letter, ≥1 number)
+          example: SecurePass123
+          minLength: 8
+          maxLength: 128
+          pattern: '^(?=.*[a-zA-Z])(?=.*[0-9]).+$'
+        displayName:
+          type: string
+          description: User display name (optional)
+          example: John Doe
+          maxLength: 80
+          nullable: true
+
+    UserProfile:
+      type: object
+      required:
+        - id
+        - email
+        - displayName
+        - onboardingCompleted
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique user identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+        email:
+          type: string
+          format: email
+          description: User email address (lowercased)
+          example: user@example.com
+        displayName:
+          type: string
+          description: User display name
+          example: John Doe
+          nullable: true
+        onboardingCompleted:
+          type: boolean
+          description: Whether user has completed onboarding
+          example: false
+
+    SignupSuccessResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          description: Always true for successful responses
+          example: true
+        data:
+          $ref: '#/components/schemas/UserProfile'
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          description: Always false for error responses
+          example: false
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              example: bad_request/invalid_input
+              enum:
+                - bad_request/invalid_input
+                - bad_request/invalid_json
+                - bad_request/invalid_content_type
+                - bad_request/payload_too_large
+                - unauthorized/missing_credentials
+                - unauthorized/invalid_credentials
+                - forbidden/insufficient_permissions
+                - not_found/resource_not_found
+                - conflict/email_in_use
+                - method_not_allowed
+                - internal/server_error
+                - internal/database_error
+            message:
+              type: string
+              description: Human-readable error message
+              example: Invalid input
+            details:
+              type: object
+              description: Additional error context (e.g., validation errors)
+              additionalProperties: true
+              example:
+                email: Invalid email address
+                password: Password must be at least 8 characters
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT authentication (not yet implemented).
+        Future endpoints will require a valid JWT token.
+
+security: []

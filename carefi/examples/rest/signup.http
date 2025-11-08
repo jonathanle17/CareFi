@@ -1,0 +1,344 @@
+#######################################
+# CareFi API - Signup Endpoint Examples
+#######################################
+#
+# VSCode REST Client Examples
+# Install extension: humao.rest-client
+#
+# Usage:
+# 1. Click "Send Request" above any request
+# 2. View response in the right panel
+# 3. Edit variables below to test different scenarios
+#
+
+###
+# Variables
+@baseUrl = http://localhost:3000
+@apiUrl = {{baseUrl}}/api
+
+###############################################################################
+# SUCCESS CASES
+###############################################################################
+
+### 1. Successful signup with display name
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "SecurePass123",
+  "displayName": "John Doe"
+}
+
+###
+
+### 2. Successful signup without display name
+# Expected: 201 Created (displayName will be null)
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "jane.smith@example.com",
+  "password": "AnotherPass456"
+}
+
+###
+
+### 3. Signup with long display name (edge case - max 80 chars)
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "long.name@example.com",
+  "password": "SecurePass123",
+  "displayName": "This is a very long display name that is exactly eighty characters in length!"
+}
+
+###
+
+### 4. Signup with email needing normalization
+# Expected: 201 Created (email will be lowercased and trimmed)
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "  UPPERCASE@EXAMPLE.COM  ",
+  "password": "SecurePass123",
+  "displayName": "  Trimmed Name  "
+}
+
+###############################################################################
+# VALIDATION ERROR CASES (400 Bad Request)
+###############################################################################
+
+### 5. Missing email
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "password": "SecurePass123",
+  "displayName": "John Doe"
+}
+
+###
+
+### 6. Missing password
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "displayName": "John Doe"
+}
+
+###
+
+### 7. Invalid email format
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "SecurePass123"
+}
+
+###
+
+### 8. Password too short (< 8 characters)
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "Short1"
+}
+
+###
+
+### 9. Password without letter
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "12345678"
+}
+
+###
+
+### 10. Password without number
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "NoNumbers"
+}
+
+###
+
+### 11. Display name too long (> 80 characters)
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123",
+  "displayName": "This display name is way too long and exceeds the maximum allowed length of eighty characters!"
+}
+
+###
+
+### 12. Invalid JSON body
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123"
+  // Invalid JSON - missing comma
+
+###
+
+### 13. Missing Content-Type header
+# Expected: 400 Bad Request
+POST {{apiUrl}}/signup
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123"
+}
+
+###############################################################################
+# CONFLICT ERROR CASES (409 Conflict)
+###############################################################################
+
+### 14. Duplicate email (run successful signup first, then this)
+# Expected: 409 Conflict
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "duplicate@example.com",
+  "password": "SecurePass123",
+  "displayName": "First Signup"
+}
+
+###
+
+### 15. Duplicate email - second attempt
+# Expected: 409 Conflict
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "duplicate@example.com",
+  "password": "DifferentPass456",
+  "displayName": "Second Signup"
+}
+
+###############################################################################
+# METHOD NOT ALLOWED (405)
+###############################################################################
+
+### 16. GET request (not allowed)
+# Expected: 405 Method Not Allowed
+GET {{apiUrl}}/signup
+
+###
+
+### 17. PUT request (not allowed)
+# Expected: 405 Method Not Allowed
+PUT {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "SecurePass123"
+}
+
+###
+
+### 18. DELETE request (not allowed)
+# Expected: 405 Method Not Allowed
+DELETE {{apiUrl}}/signup
+
+###############################################################################
+# EDGE CASES
+###############################################################################
+
+### 19. Empty display name (should become null)
+# Expected: 201 Created (displayName will be null)
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "empty.name@example.com",
+  "password": "SecurePass123",
+  "displayName": ""
+}
+
+###
+
+### 20. Whitespace-only display name (should become null)
+# Expected: 201 Created (displayName will be null after trim)
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "whitespace@example.com",
+  "password": "SecurePass123",
+  "displayName": "   "
+}
+
+###
+
+### 21. Special characters in email
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "user+test@example.com",
+  "password": "SecurePass123"
+}
+
+###
+
+### 22. Special characters in password
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "special@example.com",
+  "password": "P@ssw0rd!#$"
+}
+
+###
+
+### 23. Unicode characters in display name
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "unicode@example.com",
+  "password": "SecurePass123",
+  "displayName": "José García 日本語"
+}
+
+###############################################################################
+# PERFORMANCE TESTING
+###############################################################################
+
+### 24. Minimum valid request
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "a@b.co",
+  "password": "Password1"
+}
+
+###
+
+### 25. Maximum length email (edge case)
+# Expected: 201 Created
+POST {{apiUrl}}/signup
+Content-Type: application/json
+
+{
+  "email": "verylongemailaddressthatalmostexceedsthemaximumlength@verylongdomainname.com",
+  "password": "SecurePass123"
+}
+
+###############################################################################
+# cURL EQUIVALENTS
+###############################################################################
+
+# Successful signup
+# curl -X POST http://localhost:3000/api/signup \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"user@example.com","password":"SecurePass123","displayName":"John Doe"}'
+
+# Validation error
+# curl -X POST http://localhost:3000/api/signup \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"user@example.com","password":"short"}'
+
+# Duplicate email
+# curl -X POST http://localhost:3000/api/signup \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"duplicate@example.com","password":"SecurePass123"}'
