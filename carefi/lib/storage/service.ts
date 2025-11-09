@@ -97,8 +97,6 @@ export async function uploadImage(
   if (uploadError) {
     console.error('[STORAGE] ❌ Upload failed:', {
       error: uploadError.message,
-      statusCode: uploadError.statusCode,
-      errorCode: uploadError.error,
       duration: `${uploadDuration}ms`,
       fullError: uploadError,
     });
