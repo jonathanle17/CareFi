@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { Droplet, Target, DollarSign, Clock } from 'lucide-react';
 import { KPIStat } from '@/components/ui/kpi-stat';
 import { formatBudgetRange, formatRelativeTime, formatConfidence } from '@/lib/format';
+import { useBudget } from '@/lib/budget-context';
 import type { OnboardingRow } from '@/lib/types';
 
 interface KPIRowProps {
@@ -22,12 +25,10 @@ export function KPIRow({
   confidence,
   lastAnalysisDate,
 }: KPIRowProps) {
+  const { min, max } = useBudget();
   const primaryConcern =
     onboardingData.skin_concerns[0] || 'Not specified';
-  const budgetRange = formatBudgetRange(
-    onboardingData.budget_min_usd,
-    onboardingData.budget_max_usd
-  );
+  const budgetRange = formatBudgetRange(min, max);
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
