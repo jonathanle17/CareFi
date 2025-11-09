@@ -94,7 +94,7 @@ export function RoutinePlanner() {
   );
 
   return (
-    <Card>
+    <Card className="flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>Routine Planner</CardTitle>
@@ -104,27 +104,29 @@ export function RoutinePlanner() {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="am" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="am">
-              <Sunrise className="mr-2 h-4 w-4" />
-              Morning
-            </TabsTrigger>
-            <TabsTrigger value="pm">
-              <Moon className="mr-2 h-4 w-4" />
-              Night
-            </TabsTrigger>
-          </TabsList>
+      <CardContent className="flex-1 flex flex-col">
+        <div className="flex-1">
+          <Tabs defaultValue="am" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="am">
+                <Sunrise className="mr-2 h-4 w-4" />
+                Morning
+              </TabsTrigger>
+              <TabsTrigger value="pm">
+                <Moon className="mr-2 h-4 w-4" />
+                Night
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="am" className="mt-4">
-            {renderSteps(amSteps, 'am', setAmSteps)}
-          </TabsContent>
+            <TabsContent value="am" className="mt-4">
+              {renderSteps(amSteps, 'am', setAmSteps)}
+            </TabsContent>
 
-          <TabsContent value="pm" className="mt-4">
-            {renderSteps(pmSteps, 'pm', setPmSteps)}
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="pm" className="mt-4">
+              {renderSteps(pmSteps, 'pm', setPmSteps)}
+            </TabsContent>
+          </Tabs>
+        </div>
 
         <Button
           onClick={handleMarkDayComplete}

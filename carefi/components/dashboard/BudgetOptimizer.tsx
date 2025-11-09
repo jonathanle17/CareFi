@@ -24,35 +24,37 @@ export function BudgetOptimizer() {
   const savingsPercent = Math.round((savings / retailTotal) * 100);
 
   return (
-    <Card>
+    <Card className="flex flex-col">
       <CardHeader>
         <CardTitle>Budget Optimizer</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <BudgetSlider
-          min={min}
-          max={max}
-          absoluteMin={absoluteMin}
-          absoluteMax={absoluteMax}
-          onChange={setRange}
-        />
+      <CardContent className="space-y-6 flex-1 flex flex-col">
+        <div className="space-y-6 flex-1">
+          <BudgetSlider
+            min={min}
+            max={max}
+            absoluteMin={absoluteMin}
+            absoluteMax={absoluteMax}
+            onChange={setRange}
+          />
 
-        <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 mt-0.5">
-              <TrendingDown className="h-5 w-5 text-emerald-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-emerald-900">
-                You're saving {savingsPercent}%
-              </p>
-              <p className="mt-1 text-xs text-emerald-700">
-                Your current picks total{' '}
-                <span className="font-semibold">{formatCurrency(currentTotal)}</span>{' '}
-                vs{' '}
-                <span className="line-through">{formatCurrency(retailTotal)}</span>{' '}
-                retail
-              </p>
+          <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-20">
+                <TrendingDown className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div className="flex-1 mt-5">
+                <p className="text-sm font-medium text-emerald-900">
+                  You're saving {savingsPercent}%
+                </p>
+                <p className="mt-1 text-xs text-emerald-700">
+                  Your current picks total{' '}
+                  <span className="font-semibold">{formatCurrency(currentTotal)}</span>{' '}
+                  vs{' '}
+                  <span className="line-through">{formatCurrency(retailTotal)}</span>{' '}
+                  retail
+                </p>
+              </div>
             </div>
           </div>
         </div>
