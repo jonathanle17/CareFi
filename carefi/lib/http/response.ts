@@ -88,6 +88,31 @@ export function created<T>(data: T): NextResponse<SuccessResponse<T>> {
 }
 
 /**
+ * Create a 202 Accepted success response
+ *
+ * Used when the request has been accepted for processing, but not completed.
+ * Common for async operations or when further action is required (e.g., email confirmation).
+ *
+ * @param {T} data - Response payload
+ * @returns {NextResponse} JSON response with 202 status
+ *
+ * @example
+ * ```ts
+ * return accepted({ requiresEmailConfirmation: true, message: 'Check your email' });
+ * // { success: true, data: { requiresEmailConfirmation: true, ... } }
+ * ```
+ */
+export function accepted<T>(data: T): NextResponse<SuccessResponse<T>> {
+  return NextResponse.json(
+    {
+      success: true,
+      data,
+    },
+    { status: 202 }
+  );
+}
+
+/**
  * Create an error response
  *
  * @param {number} statusCode - HTTP status code (400, 401, 403, 404, 409, 500, etc.)

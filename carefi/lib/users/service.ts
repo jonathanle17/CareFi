@@ -12,10 +12,14 @@
  *
  * IMPORTANT: This module uses the Supabase service role (admin client)
  * Only call these functions from server-side code (API routes, server actions)
+ *
+ * SECURITY NOTE:
+ * - Passwords are NEVER stored in user_profiles
+ * - Supabase Auth handles all password hashing and storage
+ * - user_profiles only stores non-sensitive user metadata
  */
 
-import { getSupabaseAdmin } from '@/lib/supabase/server';
-import { hashPassword } from '@/lib/security/passwords';
+import { createAdminClient } from '@/lib/supabase/server';
 import { ConflictError, InternalServerError, ErrorCodes } from '@/lib/http/errors';
 import type { SignupInput } from '@/lib/validation/auth';
 
@@ -33,13 +37,13 @@ export interface UserProfile {
  * Create a new user in Supabase Auth
  *
  * @param {string} email - User email
- * @param {string} password - User password (will be hashed by Supabase)
+ * @param {string} password - User password (will be hashed by Supabase Auth)
  * @returns {Promise<string>} User ID
  * @throws {ConflictError} If email is already in use
  * @throws {InternalServerError} If user creation fails
  */
 async function createAuthUser(email: string, password: string): Promise<string> {
-  const admin = getSupabaseAdmin();
+  const admin = createAdminClient();
 
   const { data, error } = await admin.auth.admin.createUser({
     email,
@@ -67,25 +71,24 @@ async function createAuthUser(email: string, password: string): Promise<string> 
 /**
  * Insert user profile into the database
  *
+ * SECURITY: Never stores passwords - only metadata
+ *
  * @param {string} id - User ID (must match auth.users.id)
  * @param {string} email - User email
  * @param {string | null} displayName - User display name
- * @param {string} passwordHash - bcrypt password hash
  * @throws {InternalServerError} If profile creation fails
  */
 async function insertUserProfile(
   id: string,
   email: string,
-  displayName: string | null,
-  passwordHash: string
+  displayName: string | null
 ): Promise<void> {
-  const admin = getSupabaseAdmin();
+  const admin = createAdminClient();
 
   const { error } = await admin.from('user_profiles').insert({
     id,
     email,
     display_name: displayName,
-    password: passwordHash,
     onboarding_completed: false,
   });
 
@@ -103,7 +106,7 @@ async function insertUserProfile(
  * @param {string} userId - User ID to delete
  */
 async function rollbackAuthUser(userId: string): Promise<void> {
-  const admin = getSupabaseAdmin();
+  const admin = createAdminClient();
 
   try {
     const { error } = await admin.auth.admin.deleteUser(userId);
@@ -123,9 +126,8 @@ async function rollbackAuthUser(userId: string): Promise<void> {
  * This is the main entry point for user signup.
  * It performs the following steps:
  * 1. Create auth user via Supabase Auth Admin API
- * 2. Hash the password with bcrypt
- * 3. Insert user profile with hashed password
- * 4. If profile insertion fails, rollback auth user
+ * 2. Insert user profile (NO password storage)
+ * 3. If profile insertion fails, rollback auth user
  *
  * @param {SignupInput} input - Validated signup data
  * @returns {Promise<UserProfile>} Created user profile
@@ -146,14 +148,12 @@ export async function createUser(input: SignupInput): Promise<UserProfile> {
   const { email, password, displayName } = input;
 
   // Step 1: Create auth user
+  // Supabase Auth handles password hashing and storage
   const authUserId = await createAuthUser(email, password);
 
   try {
-    // Step 2: Hash password for storage in user_profiles
-    const passwordHash = await hashPassword(password);
-
-    // Step 3: Insert user profile
-    await insertUserProfile(authUserId, email, displayName || null, passwordHash);
+    // Step 2: Insert user profile (no password)
+    await insertUserProfile(authUserId, email, displayName || null);
 
     // Return sanitized user profile
     return {
@@ -163,7 +163,7 @@ export async function createUser(input: SignupInput): Promise<UserProfile> {
       onboardingCompleted: false,
     };
   } catch (error) {
-    // Step 4: Rollback auth user if profile creation failed
+    // Step 3: Rollback auth user if profile creation failed
     await rollbackAuthUser(authUserId);
     throw error;
   }
@@ -180,7 +180,7 @@ export async function createUser(input: SignupInput): Promise<UserProfile> {
  * @returns {Promise<UserProfile | null>} User profile or null if not found
  */
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
-  const admin = getSupabaseAdmin();
+  const admin = createAdminClient();
 
   const { data, error } = await admin
     .from('user_profiles')
@@ -211,7 +211,7 @@ export async function updateUserProfile(
   userId: string,
   updates: Partial<Pick<UserProfile, 'displayName' | 'onboardingCompleted'>>
 ): Promise<UserProfile> {
-  const admin = getSupabaseAdmin();
+  const admin = createAdminClient();
 
   const updateData: Record<string, unknown> = {};
   if (updates.displayName !== undefined) {
