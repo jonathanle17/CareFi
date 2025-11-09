@@ -141,8 +141,8 @@ export const POST = createPostHandler(signupSchema, async (req, body) => {
   console.log('📝 [SIGNUP] Session details:', {
     userId: signInData.user.id,
     email: signInData.user.email,
-    access_token: signInData.session.access_token.substring(0, 20) + '...',
-    refresh_token: signInData.session.refresh_token.substring(0, 20) + '...',
+    access_token: signInData.session.access_token,
+    refresh_token: signInData.session.refresh_token,
     expires_at: signInData.session.expires_at,
     expires_in: signInData.session.expires_in,
     token_type: signInData.session.token_type,
