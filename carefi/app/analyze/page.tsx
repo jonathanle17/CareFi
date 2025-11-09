@@ -157,7 +157,7 @@ export default function AnalyzePage() {
                   className="bg-white text-stone-900 hover:bg-stone-100 gap-2 flex-shrink-0"
                   size="lg"
                 >
-                  View routine
+                  View your results
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
