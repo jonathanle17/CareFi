@@ -12,6 +12,7 @@
 
 interface ServerEnv {
   SUPABASE_URL: string;
+  SUPABASE_ANON_KEY: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
@@ -21,11 +22,13 @@ interface ServerEnv {
  */
 function getServerEnv(): ServerEnv {
   const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   const missing: string[] = [];
 
   if (!supabaseUrl) missing.push('SUPABASE_URL');
+  if (!supabaseAnonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
   if (!supabaseServiceRoleKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
 
   if (missing.length > 0) {
@@ -37,6 +40,7 @@ function getServerEnv(): ServerEnv {
 
   return {
     SUPABASE_URL: supabaseUrl as string,
+    SUPABASE_ANON_KEY: supabaseAnonKey as string,
     SUPABASE_SERVICE_ROLE_KEY: supabaseServiceRoleKey as string,
   }
 }

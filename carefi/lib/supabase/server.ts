@@ -1,22 +1,88 @@
 /**
- * Supabase Admin Client (Server-side only)
+ * Supabase Server-Side Clients
  *
- * This module provides a cached Supabase client with service role privileges.
- * The service role key bypasses Row Level Security (RLS) and has full access.
+ * This module provides two types of Supabase clients for server-side use:
+ *
+ * 1. SSR Client (createServerClient):
+ *    - Uses @supabase/ssr for cookie-based session management
+ *    - Respects RLS policies based on authenticated user
+ *    - Use for auth operations and user-scoped queries
+ *
+ * 2. Admin Client (createAdminClient):
+ *    - Uses service role key (bypasses RLS)
+ *    - Full database access
+ *    - Use sparingly for privileged operations only
  *
  * SECURITY WARNING:
- * - NEVER expose this client or the service role key to the client side
- * - Only use in API routes and server components
- * - Service role can read/write any data, bypassing all RLS policies
- *
- * Use cases:
- * - Creating auth users via admin API
- * - Inserting data into tables that users shouldn't directly access
- * - Performing privileged operations (e.g., deleting users, updating roles)
+ * - NEVER expose service role key to client side
+ * - Only use admin client when RLS bypass is truly needed
+ * - Prefer SSR client for most server operations
  */
 
+import { createServerClient as createSupabaseServerClient } from '@supabase/ssr';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
 import { env } from '@/lib/env';
+
+/**
+ * Create a Supabase SSR client with cookie-based session management
+ *
+ * This client:
+ * - Automatically reads/writes auth session cookies
+ * - Respects Row Level Security (RLS) policies
+ * - Provides access to authenticated user context
+ * - Should be used for auth operations and user-scoped data
+ *
+ * @returns {Promise<SupabaseClient>} Supabase client with cookie session support
+ *
+ * @example
+ * ```ts
+ * // In a server component
+ * import { createServerClient } from '@/lib/supabase/server';
+ *
+ * const supabase = await createServerClient();
+ * const { data: { user } } = await supabase.auth.getUser();
+ * ```
+ *
+ * @example
+ * ```ts
+ * // In an API route
+ * import { createServerClient } from '@/lib/supabase/server';
+ *
+ * const supabase = await createServerClient();
+ * const { data, error } = await supabase.auth.signInWithPassword({
+ *   email: 'user@example.com',
+ *   password: 'password',
+ * });
+ * ```
+ */
+export async function createServerClient() {
+  const cookieStore = await cookies();
+
+  return createSupabaseServerClient(
+    env.SUPABASE_URL,
+    env.SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options);
+            });
+          } catch (error) {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+            console.error('Error setting cookies:', error);
+          }
+        },
+      },
+    }
+  );
+}
 
 /**
  * Cached Supabase admin client instance
@@ -25,18 +91,23 @@ import { env } from '@/lib/env';
 let supabaseAdmin: SupabaseClient | null = null;
 
 /**
- * Get or create the Supabase admin client
+ * Create or retrieve the Supabase admin client
  *
- * This client uses the service role key and has full database access.
- * The instance is cached to avoid recreating the client on every call.
+ * This client uses the service role key and bypasses RLS.
+ * Only use when you need privileged access that normal users shouldn't have.
+ *
+ * Common use cases:
+ * - Creating auth users via admin API
+ * - Inserting data into protected tables
+ * - Performing system-level operations
  *
  * @returns {SupabaseClient} Supabase client with admin privileges
  *
  * @example
  * ```ts
- * import { getSupabaseAdmin } from '@/lib/supabase/server';
+ * import { createAdminClient } from '@/lib/supabase/server';
  *
- * const admin = getSupabaseAdmin();
+ * const admin = createAdminClient();
  * const { data, error } = await admin.auth.admin.createUser({
  *   email: 'user@example.com',
  *   password: 'securepassword',
@@ -44,7 +115,7 @@ let supabaseAdmin: SupabaseClient | null = null;
  * });
  * ```
  */
-export function getSupabaseAdmin(): SupabaseClient {
+export function createAdminClient(): SupabaseClient {
   if (!supabaseAdmin) {
     supabaseAdmin = createClient(
       env.SUPABASE_URL,
@@ -62,23 +133,17 @@ export function getSupabaseAdmin(): SupabaseClient {
 }
 
 /**
+ * Legacy export for backward compatibility
+ * @deprecated Use createAdminClient() instead
+ */
+export function getSupabaseAdmin(): SupabaseClient {
+  return createAdminClient();
+}
+
+/**
  * Type-safe database schema helper
  *
  * Use this when you need explicit type checking for database operations
- *
- * @example
- * ```ts
- * import { getSupabaseAdmin } from '@/lib/supabase/server';
- *
- * const admin = getSupabaseAdmin();
- * const { data, error } = await admin
- *   .from('user_profiles')
- *   .insert({
- *     id: userId,
- *     email: 'user@example.com',
- *     display_name: 'John Doe',
- *   });
- * ```
  */
 export type Database = {
   public: {
@@ -92,7 +157,6 @@ export type Database = {
           onboarding_completed: boolean;
           onboarding_completed_at: string | null;
           email: string | null;
-          password: string | null;
         };
         Insert: {
           id: string;
@@ -102,7 +166,6 @@ export type Database = {
           onboarding_completed?: boolean;
           onboarding_completed_at?: string | null;
           email?: string | null;
-          password?: string | null;
         };
         Update: {
           id?: string;
@@ -112,7 +175,6 @@ export type Database = {
           onboarding_completed?: boolean;
           onboarding_completed_at?: string | null;
           email?: string | null;
-          password?: string | null;
         };
       };
     };

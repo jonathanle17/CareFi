@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { SectionHeading } from '@/components/SectionHeading'
 import { PrivacyNote } from '@/components/PrivacyNote'
-import { Mail, Lock, User, ArrowRight, AlertCircle } from 'lucide-react'
+import { Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [passwordError, setPasswordError] = useState('')
   const [displayNameError, setDisplayNameError] = useState('')
   const [generalError, setGeneralError] = useState('')
+  const [confirmationMessage, setConfirmationMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validateEmail = (email: string): boolean => {
@@ -79,8 +80,9 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Clear any previous general errors
+    // Clear any previous errors/messages
     setGeneralError('')
+    setConfirmationMessage('')
 
     // Validate all fields
     const isEmailValid = validateEmail(email)
@@ -94,6 +96,8 @@ export default function SignupPage() {
     setIsSubmitting(true)
 
     try {
+      console.log('📤 [CLIENT] Sending signup request for:', email);
+      
       // Call the signup API
       const response = await fetch('/api/signup', {
         method: 'POST',
@@ -108,6 +112,11 @@ export default function SignupPage() {
       })
 
       const data = await response.json()
+      console.log('📥 [CLIENT] Received response:', {
+        status: response.status,
+        ok: response.ok,
+        data: data,
+      });
 
       if (!response.ok) {
         // Handle API errors
@@ -129,8 +138,36 @@ export default function SignupPage() {
         return
       }
 
-      // Success! Navigate to the next page
-      router.push('/onboarding')
+      // Success responses (200 or 202)
+      if (response.status === 202) {
+        // Email confirmation required
+        if (data.data?.requiresEmailConfirmation) {
+          console.log('📧 [CLIENT] Email confirmation required');
+          setConfirmationMessage(
+            data.data.message ||
+              'Account created! Please check your email to confirm your account before signing in.'
+          )
+          // Do NOT redirect - user needs to confirm email first
+          setIsSubmitting(false)
+          return
+        }
+      }
+
+      // Status 200 - automatic sign-in successful
+      // Session cookies are set on the server
+      console.log('✅ [CLIENT] Signup successful! Session cookies set.');
+      console.log('🍪 [CLIENT] Session data received:', {
+        userId: data.data?.user?.id,
+        email: data.data?.user?.email,
+        displayName: data.data?.user?.displayName,
+        hasAccessToken: !!data.data?.session?.access_token,
+        hasRefreshToken: !!data.data?.session?.refresh_token,
+        expiresAt: data.data?.session?.expires_at,
+      });
+      console.log('🚀 [CLIENT] Redirecting to /onboarding...');
+      
+      // Redirect to onboarding
+      router.replace('/onboarding')
     } catch (error) {
       // Network or unexpected error
       console.error('Signup error:', error)
@@ -161,6 +198,19 @@ export default function SignupPage() {
               </div>
             )}
 
+            {/* Email Confirmation Message */}
+            {confirmationMessage && (
+              <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div className="space-y-2">
+                  <p className="text-sm text-blue-800 font-medium">{confirmationMessage}</p>
+                  <p className="text-xs text-blue-700">
+                    Once confirmed, you can sign in to continue.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
@@ -182,7 +232,7 @@ export default function SignupPage() {
                   }}
                   onBlur={handleEmailBlur}
                   className={`pl-11 ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !!confirmationMessage}
                 />
               </div>
               {emailError && (
@@ -211,7 +261,7 @@ export default function SignupPage() {
                   }}
                   onBlur={handlePasswordBlur}
                   className={`pl-11 ${passwordError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !!confirmationMessage}
                 />
               </div>
               {passwordError && (
@@ -240,7 +290,7 @@ export default function SignupPage() {
                   }}
                   onBlur={handleDisplayNameBlur}
                   className={`pl-11 ${displayNameError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !!confirmationMessage}
                 />
               </div>
               {displayNameError && (
@@ -249,20 +299,22 @@ export default function SignupPage() {
             </div>
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full bg-stone-900 hover:bg-stone-800 text-white cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
-              disabled={!isFormValid || isSubmitting}
-            >
-              {isSubmitting ? (
-                'Creating account...'
-              ) : (
-                <>
-                  Create account
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </>
-              )}
-            </Button>
+            {!confirmationMessage && (
+              <Button
+                type="submit"
+                className="w-full bg-stone-900 hover:bg-stone-800 text-white cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                disabled={!isFormValid || isSubmitting}
+              >
+                {isSubmitting ? (
+                  'Creating account...'
+                ) : (
+                  <>
+                    Create account
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            )}
           </form>
 
           {/* Divider */}
