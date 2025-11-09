@@ -130,6 +130,7 @@ export async function GET(request: NextRequest) {
       ],
       notes: notes.length > 0 ? notes : ['Analysis complete. Check your routine recommendations.'],
       modelVersion: process.env.OPENAI_VISION_MODEL || 'gpt-4o-mini',
+      detected_traits: traits, // Include full trait details
     };
 
     console.log('[API] Returning analysis summary');

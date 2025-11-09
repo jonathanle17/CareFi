@@ -71,6 +71,7 @@ export function useAnalysis(autoStart: boolean = false) {
 
         const result = await response.json();
         console.log("[useAnalysis] Analysis response:", result);
+        console.log("[useAnalysis] Detected traits:", result.data?.detected_traits || result.detected_traits);
 
         // Simulate status transitions for UI feedback
         // In reality, the API completes quickly, but we show progress for UX
@@ -94,20 +95,14 @@ export function useAnalysis(autoStart: boolean = false) {
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         // Extract traits from the analysis summary
-        // The API returns AnalysisSummary, but traits are in the series data
-        // For now, we'll create mock traits from the response
-        // In a full implementation, you'd extend the API to return detected_traits
+        // The API now returns AnalysisSummary with detected_traits array
         setStatus("complete");
-        setTraits([
-          {
-            id: "analysis-complete",
-            name: "Analysis Complete",
-            severity: "moderate",
-            description: `Skin type: ${result.data?.skin_type || "unknown"}. ${result.data?.primary_concern || "No major concerns detected"}.`,
-          },
-        ]);
 
-        console.log("[useAnalysis] Analysis completed successfully");
+        // Use the detected_traits from the response envelope, or fall back to empty array
+        const detectedTraits = result.data?.detected_traits || result.detected_traits || [];
+        setTraits(detectedTraits);
+
+        console.log("[useAnalysis] Analysis completed successfully with", detectedTraits.length, "traits");
       } catch (err) {
         console.error("[useAnalysis] Error:", err);
         setStatus("error");

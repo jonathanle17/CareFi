@@ -84,6 +84,7 @@ export function mapVisionToSummary(
     ],
     notes: visionResult.notes,
     modelVersion: visionResult.modelVersion,
+    detected_traits: visionResult.traits, // Include full trait details
   };
 
   return summary;

@@ -20,6 +20,40 @@ export default function AnalyzePage() {
     return (doneCount / progressItems.length) * 100;
   };
 
+  // Generate dynamic summary text from detected traits
+  const generateSummaryText = () => {
+    if (traits.length === 0) {
+      return "No skin traits detected.";
+    }
+
+    // Get high and moderate severity traits
+    const significantTraits = traits.filter(
+      (t) => t.severity === "high" || t.severity === "moderate"
+    );
+
+    if (significantTraits.length === 0) {
+      // All traits are low severity
+      const traitNames = traits.map((t) => t.name.toLowerCase()).join(", ");
+      return `Minor ${traitNames} detected.`;
+    }
+
+    // Build a natural language summary
+    const traitNames = significantTraits.map((t) => t.name.toLowerCase());
+    const severity = significantTraits.some((t) => t.severity === "high")
+      ? "significant"
+      : "moderate";
+
+    if (traitNames.length === 1) {
+      return `The AI detected ${severity} ${traitNames[0]}.`;
+    } else if (traitNames.length === 2) {
+      return `The AI detected ${traitNames[0]} and ${traitNames[1]}.`;
+    } else {
+      const allButLast = traitNames.slice(0, -1).join(", ");
+      const last = traitNames[traitNames.length - 1];
+      return `The AI detected ${allButLast}, and ${last}.`;
+    }
+  };
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "low":
@@ -35,14 +69,27 @@ export default function AnalyzePage() {
 
   const getTraitIcon = (traitId: string) => {
     switch (traitId) {
+      case "oiliness":
       case "oily":
         return <Droplets className="w-5 h-5" />;
+      case "sensitivity":
       case "sensitive":
         return <AlertCircle className="w-5 h-5" />;
       case "acne":
         return <Sparkles className="w-5 h-5" />;
+      case "hyperpigmentation":
       case "pih":
         return <TrendingUp className="w-5 h-5" />;
+      case "redness":
+        return <AlertCircle className="w-5 h-5" />;
+      case "dryness":
+      case "dry":
+        return <Droplets className="w-5 h-5" />;
+      case "fine-lines":
+      case "wrinkles":
+        return <TrendingUp className="w-5 h-5" />;
+      case "large-pores":
+        return <Sparkles className="w-5 h-5" />;
       default:
         return <Sparkles className="w-5 h-5" />;
     }
@@ -91,11 +138,7 @@ export default function AnalyzePage() {
                   Analysis complete
                 </h3>
                 <p className="text-lg text-stone-700">
-                  The AI detected{" "}
-                  <strong className="font-medium">
-                    oily + sensitive skin
-                  </strong>{" "}
-                  with moderate acne.
+                  {generateSummaryText()}
                 </p>
               </div>
             </Card>
