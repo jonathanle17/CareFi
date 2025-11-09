@@ -1,0 +1,44 @@
+{
+  "skinType": "Combination",
+  "confidence": 87,
+  "primaryConcern": "acne",
+  "traits": [
+    {
+      "id": "acne",
+      "name": "Acne",
+      "severity": "moderate",
+      "description": "Active breakouts visible in T-zone with some comedones present on forehead and chin"
+    },
+    {
+      "id": "oiliness",
+      "name": "Oiliness",
+      "severity": "moderate",
+      "description": "Excess sebum production detected in T-zone area, contributing to shine"
+    },
+    {
+      "id": "dryness",
+      "name": "Dryness",
+      "severity": "low",
+      "description": "Mild dry patches observed on cheek areas, indicating combination skin type"
+    },
+    {
+      "id": "large-pores",
+      "name": "Large Pores",
+      "severity": "moderate",
+      "description": "Enlarged pores visible on nose and cheeks, likely related to oil production"
+    },
+    {
+      "id": "hyperpigmentation",
+      "name": "Hyperpigmentation",
+      "severity": "low",
+      "description": "Minor post-inflammatory hyperpigmentation (PIH) marks from previous breakouts"
+    }
+  ],
+  "notes": [
+    "Consider incorporating a gentle BHA exfoliant 2-3 times per week to help with acne and pore appearance",
+    "Look for lightweight, non-comedogenic moisturizers that won't clog pores",
+    "SPF 30+ daily sunscreen is essential to prevent PIH marks from darkening",
+    "Niacinamide serums can help with oil control and pore appearance"
+  ],
+  "modelVersion": "gpt-4o-mini"
+}

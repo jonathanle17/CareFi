@@ -74,6 +74,7 @@ export type AnalysisSummary = {
   series: AnalysisPoint[];
   notes: string[];
   modelVersion: string;
+  detected_traits?: SkinTrait[]; // Optional: full trait details from OpenAI
 };
 
 export type Recommendation = {

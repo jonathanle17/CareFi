@@ -14,6 +14,8 @@ interface ServerEnv {
   NEXT_PUBLIC_SUPABASE_URL: string;
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
   NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: string;
+  OPENAI_API_KEY: string;
+  OPENAI_VISION_MODEL: string;
 }
 
 /**
@@ -24,12 +26,17 @@ function getServerEnv(): ServerEnv {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabaseServiceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  const openaiVisionModel = process.env.OPENAI_VISION_MODEL || 'gpt-4o-mini';
 
   const missing: string[] = [];
 
   if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL');
   if (!supabaseAnonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
   if (!supabaseServiceRoleKey) missing.push('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY');
+  if (!openaiApiKey && process.env.NODE_ENV === 'production') {
+    missing.push('OPENAI_API_KEY');
+  }
 
   if (missing.length > 0) {
     throw new Error(
@@ -42,6 +49,8 @@ function getServerEnv(): ServerEnv {
     NEXT_PUBLIC_SUPABASE_URL: supabaseUrl as string,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey as string,
     NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: supabaseServiceRoleKey as string,
+    OPENAI_API_KEY: openaiApiKey || '',
+    OPENAI_VISION_MODEL: openaiVisionModel,
   }
 }
 

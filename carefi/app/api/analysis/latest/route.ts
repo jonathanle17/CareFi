@@ -7,9 +7,8 @@ import type { AnalysisSummary } from '@/lib/types';
  *
  * Returns the latest skin analysis for the authenticated user
  *
- * MOCK IMPLEMENTATION:
- * - Currently returns deterministic sample data
- * - Replace with real analysis service integration later
+ * Queries the skin_analyses table for the most recent completed analysis
+ * and transforms it into the AnalysisSummary format for the dashboard.
  *
  * Response schema: AnalysisSummary
  */
@@ -24,58 +23,122 @@ export async function GET(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { success: false, error: { code: 'unauthorized', message: 'Unauthorized' } },
         { status: 401 }
       );
     }
 
-    // TODO: Replace with real query to skin_analyses table
-    // const { data: analysis, error } = await supabase
-    //   .from('skin_analyses')
-    //   .select('*')
-    //   .eq('user_id', user.id)
-    //   .eq('status', 'complete')
-    //   .order('completed_at', { ascending: false })
-    //   .limit(1)
-    //   .single();
+    console.log(`[API] /api/analysis/latest - User ${user.id}`);
 
-    // MOCK DATA: Generate deterministic 30-day time series
-    const today = new Date();
-    const series = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date(today);
-      date.setDate(date.getDate() - (29 - i));
+    // Query the most recent completed analysis
+    const { data: analysis, error } = await supabase
+      .from('skin_analyses')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'complete')
+      .order('completed_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(); // Use maybeSingle to return null if no rows found
 
-      // Generate slightly varied scores with downward trend
-      const dayFactor = i / 30; // 0 to 1
-      return {
-        date: date.toISOString(),
-        acne: Math.max(20, 65 - dayFactor * 20 + Math.sin(i * 0.5) * 5),
-        dryness: Math.max(15, 45 - dayFactor * 15 + Math.cos(i * 0.3) * 8),
-        pigmentation: Math.max(10, 35 - dayFactor * 10 + Math.sin(i * 0.7) * 6),
-      };
+    if (error) {
+      console.error('[API] Database query error:', error);
+      return NextResponse.json(
+        { success: false, error: { code: 'db_error', message: 'Failed to fetch analysis' } },
+        { status: 500 }
+      );
+    }
+
+    // No analysis found - return 204 No Content
+    if (!analysis) {
+      console.log('[API] No completed analysis found for user');
+      return NextResponse.json(
+        { success: true, data: null },
+        { status: 200 }
+      );
+    }
+
+    console.log('[API] Found analysis:', {
+      id: analysis.id,
+      completedAt: analysis.completed_at,
+      traitsCount: analysis.detected_traits?.length || 0,
     });
 
-    const mockAnalysis: AnalysisSummary = {
-      user_id: user.id,
-      skin_type: 'oily',
-      confidence: 0.87,
-      primary_concern: 'acne',
-      updatedAt: new Date().toISOString(),
-      series,
-      notes: [
-        'Acne severity has decreased by 15% over the past 30 days',
-        'Oiliness is most prominent in T-zone areas',
-        'Consider increasing niacinamide concentration from 2% to 5%',
-        'PIH (post-inflammatory hyperpigmentation) risk detected in affected areas',
-      ],
-      modelVersion: 'v2.1.3',
+    // Transform database row into AnalysisSummary
+    const traits = (analysis.detected_traits || []) as Array<{
+      id: string;
+      name: string;
+      severity: 'low' | 'moderate' | 'high';
+      description: string;
+    }>;
+
+    // Extract severity scores for dashboard metrics
+    const getTraitSeverity = (traitId: string): number => {
+      const trait = traits.find((t) => t.id === traitId);
+      if (!trait) return 0;
+
+      const severityMap = {
+        low: 25,
+        moderate: 55,
+        high: 85,
+      };
+      return severityMap[trait.severity];
     };
 
-    return NextResponse.json(mockAnalysis);
+    // Infer skin type from traits (fallback to 'normal' if not determinable)
+    let skinType: AnalysisSummary['skin_type'] = 'normal';
+    const hasOiliness = traits.some((t) => t.id === 'oiliness' && t.severity !== 'low');
+    const hasDryness = traits.some((t) => t.id === 'dryness' && t.severity !== 'low');
+    const hasSensitivity = traits.some((t) => t.id === 'sensitivity' && t.severity !== 'low');
+
+    if (hasOiliness && hasDryness) {
+      skinType = 'combination';
+    } else if (hasOiliness) {
+      skinType = 'oily';
+    } else if (hasDryness) {
+      skinType = 'dry';
+    } else if (hasSensitivity) {
+      skinType = 'sensitive';
+    }
+
+    // Determine primary concern (highest severity trait)
+    const sortedTraits = [...traits].sort((a, b) => {
+      const severityOrder = { high: 3, moderate: 2, low: 1 };
+      return severityOrder[b.severity] - severityOrder[a.severity];
+    });
+    const primaryConcern = sortedTraits[0]?.name || 'No major concerns';
+
+    // Generate notes from traits
+    const notes = traits
+      .filter((t) => t.severity !== 'low')
+      .map((t) => `${t.name}: ${t.description}`)
+      .slice(0, 4); // Limit to 4 most relevant notes
+
+    // Create single-point time series (latest analysis only)
+    const summary: AnalysisSummary = {
+      user_id: user.id,
+      skin_type: skinType,
+      confidence: (analysis.confidence_score || 0) / 100, // Convert to 0-1 scale
+      primary_concern: primaryConcern,
+      updatedAt: analysis.completed_at || analysis.created_at,
+      series: [
+        {
+          date: analysis.completed_at || analysis.created_at,
+          acne: getTraitSeverity('acne'),
+          dryness: getTraitSeverity('dryness'),
+          pigmentation: getTraitSeverity('hyperpigmentation'),
+        },
+      ],
+      notes: notes.length > 0 ? notes : ['Analysis complete. Check your routine recommendations.'],
+      modelVersion: process.env.OPENAI_VISION_MODEL || 'gpt-4o-mini',
+      detected_traits: traits, // Include full trait details
+    };
+
+    console.log('[API] Returning analysis summary');
+    return NextResponse.json(summary);
   } catch (error) {
     console.error('[API] /api/analysis/latest error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: { code: 'internal_error', message: 'Internal server error' } },
       { status: 500 }
     );
   }
