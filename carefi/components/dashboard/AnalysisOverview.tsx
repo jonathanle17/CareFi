@@ -2,27 +2,16 @@
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
 import { ChartCard } from '@/components/ui/chart-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
-import { TrendingDown } from 'lucide-react';
-import { formatChartDate } from '@/lib/format';
-import type { AnalysisSummary } from '@/lib/types';
+import { TrendingDown, Droplet, Flame, AlertCircle, Sun, Clock, Circle } from 'lucide-react';
+import type { AnalysisSummary, SkinTrait } from '@/lib/types';
 
 /**
  * Analysis Overview Component
  *
- * Displays time-series chart of skin analysis scores
+ * Displays detected skin traits with visual severity indicators
  */
 export function AnalysisOverview() {
   const { data, isLoading, error } = useQuery<AnalysisSummary>({
@@ -58,105 +47,148 @@ export function AnalysisOverview() {
     );
   }
 
-  const chartData = data.series.map((point) => ({
-    date: formatChartDate(point.date),
-    acne: Math.round(point.acne),
-    dryness: Math.round(point.dryness),
-    pigmentation: Math.round(point.pigmentation),
-  }));
+  const traits = data.detected_traits || [];
 
   const aside = (
     <div className="text-right space-y-1">
-      <p className="text-xs text-neutral-500">Model: {data.modelVersion}</p>
       <p className="text-xs text-neutral-500">
         Updated: {new Date(data.updatedAt).toLocaleDateString()}
       </p>
     </div>
   );
 
+  // Map trait IDs to icons and colors
+  const getTraitIcon = (traitId: string) => {
+    const iconMap: Record<string, React.ElementType> = {
+      acne: AlertCircle,
+      dryness: Droplet,
+      oiliness: Flame,
+      sensitivity: AlertCircle,
+      hyperpigmentation: Sun,
+      'fine-lines': Clock,
+      redness: Flame,
+      'large-pores': Circle,
+    };
+    return iconMap[traitId] || Circle;
+  };
+
+  const getSeverityStyles = (severity: 'low' | 'moderate' | 'high') => {
+    const styles = {
+      low: {
+        bg: 'bg-stone-50',
+        border: 'border-stone-200',
+        text: 'text-stone-700',
+        badge: 'bg-stone-100 text-stone-700',
+        bar: 'bg-emerald-400',
+        width: 'w-1/3',
+      },
+      moderate: {
+        bg: 'bg-stone-50',
+        border: 'border-stone-200',
+        text: 'text-stone-700',
+        badge: 'bg-stone-100 text-stone-700',
+        bar: 'bg-yellow-400',
+        width: 'w-2/3',
+      },
+      high: {
+        bg: 'bg-stone-50',
+        border: 'border-rose-200',
+        text: 'text-stone-700',
+        badge: 'bg-stone-100 text-stone-700',
+        bar: 'bg-red-400',
+        width: 'w-full',
+      },
+    };
+    return styles[severity];
+  };
+
+  if (traits.length === 0) {
+    return (
+      <ChartCard title="Analysis Overview" aside={aside}>
+        <EmptyState
+          icon={TrendingDown}
+          title="No traits detected"
+          description="Complete an analysis to see your skin traits"
+        />
+      </ChartCard>
+    );
+  }
+
   return (
     <ChartCard
-      title="Analysis Overview"
-      description="Skin concern trends over the past 30 days"
+      title="Detected Skin Traits"
+      description={`${traits.length} trait${traits.length !== 1 ? 's' : ''} identified in your analysis`}
       aside={aside}
     >
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart
-          data={chartData}
-          margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-          <XAxis
-            dataKey="date"
-            stroke="#737373"
-            fontSize={12}
-            tickLine={false}
-          />
-          <YAxis
-            stroke="#737373"
-            fontSize={12}
-            tickLine={false}
-            domain={[0, 100]}
-            label={{ value: 'Severity', angle: -90, position: 'insideLeft', fontSize: 12 }}
-          />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '8px',
-              fontSize: '12px',
-            }}
-          />
-          <Legend
-            wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
-          />
-          <Line
-            type="monotone"
-            dataKey="acne"
-            stroke="#ef4444"
-            strokeWidth={2}
-            dot={false}
-            name="Acne"
-            aria-label="Acne severity over time"
-          />
-          <Line
-            type="monotone"
-            dataKey="dryness"
-            stroke="#3b82f6"
-            strokeWidth={2}
-            dot={false}
-            name="Dryness"
-            aria-label="Dryness severity over time"
-          />
-          <Line
-            type="monotone"
-            dataKey="pigmentation"
-            stroke="#a855f7"
-            strokeWidth={2}
-            dot={false}
-            name="Pigmentation"
-            aria-label="Pigmentation severity over time"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="space-y-4">
+        {traits.map((trait) => {
+          const Icon = getTraitIcon(trait.id);
+          const styles = getSeverityStyles(trait.severity);
+
+          return (
+            <div
+              key={trait.id}
+              className={`rounded-lg border ${styles.border} ${styles.bg} p-4 transition-all hover:shadow-sm`}
+            >
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <div className="flex items-center gap-2 flex-1">
+                  <Icon className={`w-5 h-5 ${styles.text}`} />
+                  <h4 className={`font-semibold ${styles.text}`}>{trait.name}</h4>
+                </div>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${styles.badge} uppercase tracking-wide`}
+                >
+                  {trait.severity}
+                </span>
+              </div>
+
+              {/* Severity bar */}
+              <div className="mb-2 h-2 bg-white/50 rounded-full overflow-hidden">
+                <div
+                  className={`h-full ${styles.bar} transition-all duration-500 rounded-full`}
+                  style={{ width: styles.width.replace('w-', '').replace('1/3', '33%').replace('2/3', '66%').replace('full', '100%') }}
+                />
+              </div>
+
+              <p className="text-sm text-neutral-600">{trait.description}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Severity legend */}
+      <div className="mt-6 pt-4 border-t border-neutral-200">
+        <div className="flex justify-center gap-6 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-emerald-400" />
+            <span className="text-neutral-600">Low</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-amber-400" />
+            <span className="text-neutral-600">Moderate</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-rose-400" />
+            <span className="text-neutral-600">High</span>
+          </div>
+        </div>
+      </div>
 
       {/* Offscreen table for accessibility */}
-      <div className="sr-only" role="table" aria-label="Analysis data table">
+      <div className="sr-only" role="table" aria-label="Detected traits table">
         <div role="rowgroup">
           <div role="row">
-            <div role="columnheader">Date</div>
-            <div role="columnheader">Acne</div>
-            <div role="columnheader">Dryness</div>
-            <div role="columnheader">Pigmentation</div>
+            <div role="columnheader">Trait</div>
+            <div role="columnheader">Severity</div>
+            <div role="columnheader">Description</div>
           </div>
         </div>
         <div role="rowgroup">
-          {data.series.slice(-7).map((point, i) => (
+          {traits.map((trait, i) => (
             <div key={i} role="row">
-              <div role="cell">{formatChartDate(point.date)}</div>
-              <div role="cell">{Math.round(point.acne)}</div>
-              <div role="cell">{Math.round(point.dryness)}</div>
-              <div role="cell">{Math.round(point.pigmentation)}</div>
+              <div role="cell">{trait.name}</div>
+              <div role="cell">{trait.severity}</div>
+              <div role="cell">{trait.description}</div>
             </div>
           ))}
         </div>

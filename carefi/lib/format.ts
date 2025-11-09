@@ -2,7 +2,7 @@
  * Formatting utilities for dashboard displays
  */
 
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNowStrict, format } from 'date-fns';
 
 /**
  * Format a number as USD currency
@@ -35,7 +35,7 @@ export function formatPercent(value: number, decimals = 0): string {
 export function formatRelativeTime(date: string | Date): string {
   try {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return formatDistanceToNow(dateObj, { addSuffix: true });
+    return formatDistanceToNowStrict(dateObj, { addSuffix: true });
   } catch (error) {
     return 'Unknown';
   }

@@ -55,8 +55,8 @@ export function KPIRow({
 
       <KPIStat
         label="Last Analysis"
-        value={lastAnalysisDate ? formatRelativeTime(lastAnalysisDate) : 'No data'}
-        subtitle="Upload photos for updates"
+        value={lastAnalysisDate ? formatRelativeTime(lastAnalysisDate) : 'Never'}
+        subtitle="Upload more photos for updates"
         icon={Clock}
       />
     </div>

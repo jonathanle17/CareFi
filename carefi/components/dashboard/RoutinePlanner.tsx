@@ -35,7 +35,7 @@ export function RoutinePlanner() {
     { id: 'pm-moisturizer', label: 'Rich night cream', completed: false },
   ]);
 
-  const [streak, setStreak] = useState(7);
+  const [streak, setStreak] = useState(1);
   const [todayCompleted, setTodayCompleted] = useState(false);
 
   const toggleStep = (

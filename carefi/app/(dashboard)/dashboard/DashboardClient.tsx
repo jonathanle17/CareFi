@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BudgetProvider } from '@/lib/budget-context';
 import { Header } from '@/components/dashboard/Header';
@@ -11,7 +11,7 @@ import { BudgetOptimizer } from '@/components/dashboard/BudgetOptimizer';
 import { RecommendationsTable } from '@/components/dashboard/RecommendationsTable';
 import { InsightsFeed } from '@/components/dashboard/InsightsFeed';
 import { AllergyList } from '@/components/dashboard/AllergyList';
-import type { OnboardingRow } from '@/lib/types';
+import type { OnboardingRow, AnalysisSummary } from '@/lib/types';
 
 interface DashboardClientProps {
   onboardingData: OnboardingRow;
@@ -37,6 +37,35 @@ export function DashboardClient({
   onboardingData,
   displayName,
 }: DashboardClientProps) {
+  const [latestAnalysis, setLatestAnalysis] = useState<AnalysisSummary | null>(null);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(true);
+
+  // Fetch the latest analysis on mount
+  useEffect(() => {
+    const fetchLatestAnalysis = async () => {
+      try {
+        const response = await fetch('/api/analysis/latest');
+        if (response.ok) {
+          const data = await response.json();
+          // API returns { success: true, data: null } when no analysis exists
+          // or the AnalysisSummary directly
+          if (data.success === true && data.data === null) {
+            setLatestAnalysis(null);
+          } else if (data.user_id) {
+            // AnalysisSummary format
+            setLatestAnalysis(data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch latest analysis:', error);
+      } finally {
+        setIsLoadingAnalysis(false);
+      }
+    };
+
+    fetchLatestAnalysis();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <BudgetProvider
@@ -49,13 +78,24 @@ export function DashboardClient({
             <Header displayName={displayName} />
 
             {/* KPI Row */}
-            <KPIRow onboardingData={onboardingData} />
+            <KPIRow 
+              onboardingData={onboardingData}
+              skinType={latestAnalysis?.skin_type}
+              confidence={latestAnalysis?.confidence}
+              lastAnalysisDate={latestAnalysis?.updatedAt}
+            />
 
             {/* Main Grid */}
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Analysis Chart */}
+
               <div className="lg:col-span-2">
                 <AnalysisOverview />
+              </div>
+
+              {/* Recommendations Table */}
+              <div className="lg:col-span-2">
+                <RecommendationsTable skinConcerns={onboardingData.skin_concerns} />
               </div>
 
               {/* Routine Planner */}
@@ -63,21 +103,6 @@ export function DashboardClient({
 
               {/* Budget Optimizer */}
               <BudgetOptimizer />
-
-              {/* Recommendations Table */}
-              <div className="lg:col-span-2">
-                <RecommendationsTable skinConcerns={onboardingData.skin_concerns} />
-              </div>
-
-              {/* Insights Feed */}
-              <div className="lg:col-span-1">
-                <InsightsFeed />
-              </div>
-
-              {/* Allergy List */}
-              <div className="lg:col-span-1">
-                <AllergyList ingredientsToAvoid={onboardingData.ingredients_to_avoid} />
-              </div>
             </div>
 
             {/* Footer */}
