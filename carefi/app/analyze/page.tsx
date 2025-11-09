@@ -153,7 +153,7 @@ export default function AnalyzePage() {
                   </p>
                 </div>
                 <Button
-                  onClick={() => router.push("/routine")}
+                  onClick={() => router.push("/dashboard")}
                   className="bg-white text-stone-900 hover:bg-stone-100 gap-2 flex-shrink-0"
                   size="lg"
                 >

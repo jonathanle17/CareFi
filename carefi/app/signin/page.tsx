@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { SectionHeading } from '@/components/SectionHeading'
 import { PrivacyNote } from '@/components/PrivacyNote'
 import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react'
+import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 
 export default function SigninPage() {
   const router = useRouter()
@@ -131,10 +132,20 @@ export default function SigninPage() {
           expiresAt: data.data.session.expires_at,
         });
 
+        // Set the session on the browser client to trigger onAuthStateChange
+        // This ensures the Navbar and other components update immediately
+        console.log('🔄 [CLIENT] Setting session on browser client...');
+        const supabase = getSupabaseBrowserClient();
+        await supabase.auth.setSession({
+          access_token: data.data.session.access_token,
+          refresh_token: data.data.session.refresh_token,
+        });
+        console.log('✨ [CLIENT] Browser client session set, auth state updated');
+
         // Redirect based on onboarding status
         if (data.data.user.onboardingCompleted) {
-          console.log('🚀 [CLIENT] User has completed onboarding, redirecting to /analyze...');
-          router.replace('/analyze')
+          console.log('🚀 [CLIENT] User has completed onboarding, redirecting to /dashboard...');
+          router.replace('/dashboard')
         } else {
           console.log('🚀 [CLIENT] User needs onboarding, redirecting to /onboarding...');
           router.replace('/onboarding')

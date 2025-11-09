@@ -11,9 +11,9 @@
  */
 
 interface ServerEnv {
-  SUPABASE_URL: string;
-  SUPABASE_ANON_KEY: string;
-  SUPABASE_SERVICE_ROLE_KEY: string;
+  NEXT_PUBLIC_SUPABASE_URL: string;
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+  NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
 /**
@@ -21,15 +21,15 @@ interface ServerEnv {
  * Throws descriptive error if any required variable is missing
  */
 function getServerEnv(): ServerEnv {
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseServiceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
 
   const missing: string[] = [];
 
-  if (!supabaseUrl) missing.push('SUPABASE_URL');
+  if (!supabaseUrl) missing.push('NEXT_PUBLIC_SUPABASE_URL');
   if (!supabaseAnonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
-  if (!supabaseServiceRoleKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseServiceRoleKey) missing.push('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY');
 
   if (missing.length > 0) {
     throw new Error(
@@ -39,9 +39,9 @@ function getServerEnv(): ServerEnv {
   }
 
   return {
-    SUPABASE_URL: supabaseUrl as string,
-    SUPABASE_ANON_KEY: supabaseAnonKey as string,
-    SUPABASE_SERVICE_ROLE_KEY: supabaseServiceRoleKey as string,
+    NEXT_PUBLIC_SUPABASE_URL: supabaseUrl as string,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey as string,
+    NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: supabaseServiceRoleKey as string,
   }
 }
 
@@ -52,7 +52,7 @@ function getServerEnv(): ServerEnv {
  * ```ts
  * import { env } from '@/lib/env';
  *
- * const client = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+ * const client = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY);
  * ```
  */
 export const env = getServerEnv();

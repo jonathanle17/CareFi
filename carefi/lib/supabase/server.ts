@@ -60,8 +60,8 @@ export async function createServerClient() {
   const cookieStore = await cookies();
 
   return createSupabaseServerClient(
-    env.SUPABASE_URL,
-    env.SUPABASE_ANON_KEY,
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -69,14 +69,22 @@ export async function createServerClient() {
         },
         setAll(cookiesToSet) {
           try {
+            // Try to set cookies - this works in:
+            // - Route Handlers (API routes) ✅
+            // - Server Actions ✅
+            // - Middleware ✅
+            // 
+            // But fails in:
+            // - Server Components ❌
+            //
+            // When it fails in Server Components, the middleware
+            // handles session refresh, so we can safely ignore the error
             cookiesToSet.forEach(({ name, value, options }) => {
               cookieStore.set(name, value, options);
             });
-          } catch (error) {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-            console.error('Error setting cookies:', error);
+          } catch {
+            // Silently ignore cookie setting errors in Server Components
+            // The middleware handles session refresh for these cases
           }
         },
       },
@@ -118,8 +126,8 @@ let supabaseAdmin: SupabaseClient | null = null;
 export function createAdminClient(): SupabaseClient {
   if (!supabaseAdmin) {
     supabaseAdmin = createClient(
-      env.SUPABASE_URL,
-      env.SUPABASE_SERVICE_ROLE_KEY,
+      env.NEXT_PUBLIC_SUPABASE_URL,
+      env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY,
       {
         auth: {
           autoRefreshToken: false,
