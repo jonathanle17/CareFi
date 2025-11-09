@@ -18,6 +18,10 @@
 }
 
 @layer base {
+  html {
+    overflow-y: scroll;
+  }
+
   body {
     font-family: var(--font-sans);
     background: linear-gradient(to bottom right, #f5f5f4, #f5f5f5, #fafaf9);
