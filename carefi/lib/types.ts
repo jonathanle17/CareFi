@@ -39,3 +39,18 @@ export type BudgetComparison = {
   savings: number;
   savingsPercent: number;
 };
+
+// Storage types
+export type ImageAngle = 'front' | 'left_45' | 'right_45';
+
+export interface UploadImageResponse {
+  success: boolean;
+  data: {
+    storageUrl: string;
+    path: string;
+    fileName: string;
+    fileSize: number;
+    mimeType: string;
+    angle: ImageAngle;
+  };
+}

@@ -8,16 +8,85 @@ import { UploadZone } from "@/components/UploadZone";
 import { PrivacyNote } from "@/components/PrivacyNote";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, ArrowRight, ArrowLeft } from "lucide-react";
+import { Lightbulb, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import type { ImageAngle, UploadImageResponse } from "@/lib/types";
 
 export default function UploadPage() {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{
+    completed: number;
+    total: number;
+    current?: string;
+  }>({ completed: 0, total: 0 });
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const handleContinue = () => {
-    if (files.length === 3) {
-      // TODO: Upload files to backend
+  // Map files to angles: first = left_45, second = front, third = right_45
+  const angleMap: ImageAngle[] = ['left_45', 'front', 'right_45'];
+
+  const uploadFile = async (file: File, angle: ImageAngle): Promise<UploadImageResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('angle', angle);
+
+    const response = await fetch('/api/uploadImage', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to upload image');
+    }
+
+    return response.json();
+  };
+
+  const handleContinue = async () => {
+    if (files.length !== 3) return;
+
+    setUploading(true);
+    setUploadError(null);
+    setUploadProgress({ completed: 0, total: 3 });
+
+    try {
+      // Upload files sequentially
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const angle = angleMap[i];
+        
+        setUploadProgress({
+          completed: i,
+          total: 3,
+          current: `Uploading ${angle}...`,
+        });
+
+        console.log(`[UPLOAD PAGE] Uploading file ${i + 1}/3:`, {
+          fileName: file.name,
+          angle,
+          size: file.size,
+        });
+
+        const result = await uploadFile(file, angle);
+        console.log(`[UPLOAD PAGE] ✅ Upload ${i + 1} successful:`, result);
+
+        setUploadProgress({
+          completed: i + 1,
+          total: 3,
+          current: `Uploaded ${angle}`,
+        });
+      }
+
+      console.log('[UPLOAD PAGE] ✅ All files uploaded successfully');
+      // Navigate to analyze page after successful upload
       router.push("/analyze");
+    } catch (error) {
+      console.error('[UPLOAD PAGE] ❌ Upload failed:', error);
+      setUploadError(
+        error instanceof Error ? error.message : 'Failed to upload images. Please try again.'
+      );
+      setUploading(false);
     }
   };
 
@@ -61,11 +130,45 @@ export default function UploadPage() {
           {/* Privacy note */}
           <PrivacyNote />
 
+          {/* Upload error */}
+          {uploadError && (
+            <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+              <p className="text-sm text-red-800 font-medium">Upload failed</p>
+              <p className="text-sm text-red-700 mt-1">{uploadError}</p>
+            </div>
+          )}
+
+          {/* Upload progress */}
+          {uploading && (
+            <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
+              <div className="flex items-center gap-3">
+                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-blue-900">
+                    {uploadProgress.current || 'Uploading images...'}
+                  </p>
+                  <p className="text-xs text-blue-700 mt-1">
+                    {uploadProgress.completed} of {uploadProgress.total} uploaded
+                  </p>
+                  <div className="mt-2 w-full bg-blue-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{
+                        width: `${(uploadProgress.completed / uploadProgress.total) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Navigation */}
           <div className="flex items-center justify-between pt-6 border-t border-gray-200">
             <Button
               variant="ghost"
               onClick={() => router.push("/onboarding")}
+              disabled={uploading}
               className="gap-2 hover:bg-blue-50"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -74,14 +177,23 @@ export default function UploadPage() {
             <div className="flex flex-col items-end">
               <Button
                 onClick={handleContinue}
-                disabled={files.length !== 3}
-                className="gap-2 bg-[#4d688a] hover:bg-slate-700 text-white"
+                disabled={files.length !== 3 || uploading}
+                className="gap-2 bg-[#4d688a] hover:bg-slate-700 text-white disabled:opacity-50"
                 size="lg"
               >
-                Continue to analysis
-                <ArrowRight className="w-4 h-4" />
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    Continue to analysis
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </Button>
-              {files.length < 3 && (
+              {files.length < 3 && !uploading && (
                 <p className="text-sm text-gray-500 mt-3">
                   Upload {3 - files.length} more{" "}
                   {3 - files.length === 1 ? "photo" : "photos"} to continue
