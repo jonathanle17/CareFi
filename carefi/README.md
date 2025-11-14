@@ -1,4 +1,4 @@
-# DermaFi - AI Dermatology Assistant
+# CareFi - AI Dermatology Assistant
 
 A production-ready Next.js application for AI-powered skin analysis and personalized skincare routine recommendations with budget optimization.
 
